@@ -1,0 +1,101 @@
+{
+    "author": "The Resetter",
+    "dependencies": {
+        "pebble-clay": "^1.0.2"
+    },
+    "keywords": [],
+    "name": "woozy",
+    "pebble": {
+        "capabilities": [
+            "configurable"
+        ],
+        "displayName": "Woozy",
+        "enableMultiJS": true,
+        "messageKeys": [
+            "ANALOG_SECONDS_DISPLAY_TIMEOUT_SECS",
+            "CHIME_INTERVAL",
+            "CHIME_START_TIME",
+            "CHIME_END_TIME",
+            "CHIME_ON_DAYS[7]",
+            "CHIME_OFFSET",
+            "SHOW_BATTERY_GAUGE"
+        ],
+        "projectType": "native",
+        "resources": {
+            "media": [
+                {
+                    "file": "images/webOS.clockface.png",
+                    "name": "IMAGE_WEBOS_CLOCKFACE",
+                    "targetPlatforms": [
+                        "basalt",
+                        "emery"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/webOS.clockface.hour.png",
+                    "name": "IMAGE_WEBOS_CLOCKFACE_HOUR",
+                    "targetPlatforms": [
+                        "basalt",
+                        "emery"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "images/webOS Clock Icon.png",
+                    "name": "IMAGE_WEBOS_CLOCK_ICON",
+                    "targetPlatforms": [
+                        "basalt",
+                        "emery"
+                    ],
+                    "type": "bitmap"
+                },
+                {
+                    "file": "fonts/Prelude-Medium.ttf",
+                    "name": "FONT_PRELUDE_MEDIUM_18",
+                    "targetPlatforms": [
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/Prelude-Medium.ttf",
+                    "name": "FONT_PRELUDE_MEDIUM_14",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9:]",
+                    "file": "fonts/Prelude-Bold.ttf",
+                    "name": "FONT_PRELUDE_BOLD_36",
+                    "targetPlatforms": [
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9:]",
+                    "file": "fonts/Prelude-Bold.ttf",
+                    "name": "FONT_PRELUDE_BOLD_24",
+                    "targetPlatforms": [
+                        "basalt"
+                    ],
+                    "type": "font"
+                }
+            ]
+        },
+        "sdkVersion": "3",
+        "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "diorite"
+        ],
+        "uuid": "03c18386-c7e0-4e8c-99cb-1a468bae8d6c",
+        "watchapp": {
+            "watchface": true
+        }
+    },
+    "version": "1.0.0"
+}

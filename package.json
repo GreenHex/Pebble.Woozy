@@ -24,65 +24,14 @@
         "resources": {
             "media": [
                 {
-                    "file": "images/webOS.clockface.png",
-                    "name": "IMAGE_WEBOS_CLOCKFACE",
+                    "file": "images/Clockface.png",
+                    "name": "IMAGE_CLOCKFACE",
                     "targetPlatforms": [
+                        "aplite",
                         "basalt",
-                        "emery"
+                        "diorite"
                     ],
                     "type": "bitmap"
-                },
-                {
-                    "file": "images/webOS.clockface.hour.png",
-                    "name": "IMAGE_WEBOS_CLOCKFACE_HOUR",
-                    "targetPlatforms": [
-                        "basalt",
-                        "emery"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "images/webOS Clock Icon.png",
-                    "name": "IMAGE_WEBOS_CLOCK_ICON",
-                    "targetPlatforms": [
-                        "basalt",
-                        "emery"
-                    ],
-                    "type": "bitmap"
-                },
-                {
-                    "file": "fonts/Prelude-Medium.ttf",
-                    "name": "FONT_PRELUDE_MEDIUM_18",
-                    "targetPlatforms": [
-                        "emery"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "file": "fonts/Prelude-Medium.ttf",
-                    "name": "FONT_PRELUDE_MEDIUM_14",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "characterRegex": "[0-9:]",
-                    "file": "fonts/Prelude-Bold.ttf",
-                    "name": "FONT_PRELUDE_BOLD_36",
-                    "targetPlatforms": [
-                        "emery"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "characterRegex": "[0-9:]",
-                    "file": "fonts/Prelude-Bold.ttf",
-                    "name": "FONT_PRELUDE_BOLD_24",
-                    "targetPlatforms": [
-                        "basalt"
-                    ],
-                    "type": "font"
                 }
             ]
         },

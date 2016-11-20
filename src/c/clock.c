@@ -5,6 +5,8 @@
 #include <pebble.h>
 #include "global.h"
 #include "clock.h"
+#include "animation.h"
+#include "randomize_clockface.h"
 
 #if defined( PBL_COLOR )
 #define NUM_PBL_64_COLOURS 64
@@ -21,34 +23,22 @@ const uint32_t PBL_64_COLOURS[ NUM_PBL_64_COLOURS ] = {
 };
 #endif /* PBL_COLOR */
 
-#define NUM_DIGITS 12
-
 static Layer *window_layer = 0;
 static BitmapLayer *clockface_layer = 0;
 static GBitmap *clockface_bitmap = 0;
-static Layer *digit_layer[ NUM_DIGITS ] = { 0 };
-static Layer *hour_layer = 0;
-static Layer *min_layer = 0;
 static char digit_str[3] = "0";
-static PropertyAnimation *digit_prop_animation = 0;
-static PropertyAnimation *hour_hand_prop_animation = 0;
-static PropertyAnimation *min_hand_prop_animation = 0;
+
+extern Layer *digit_layer[];
+extern Layer *hour_layer;
+extern Layer *min_layer;
 extern tm tm_time;
 
-bool is_X_in_range( int a, int b, int x ) { return ( ( b > a ) ? ( ( x >= a ) && ( x < b ) ) : ( ( x >= a ) || ( x < b ) ) ); };
+static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed );
 
 static void print_rect( char *str, GRect rect ) {
+  #ifdef DEBUG
   APP_LOG( APP_LOG_LEVEL_INFO, "%s: ( %d, %d, %d, %d )", str, rect.origin.x, rect.origin.y, rect.size.w, rect.size.h );
-}
-
-int16_t get_next_random_value( int16_t x, int16_t min_val, int16_t max_val, int mod_val ) {
-  int rand_val = rand() % mod_val;
-  int is_plus_not_minus = rand() % 2;
-  int16_t tmp_val = is_plus_not_minus ? x + rand_val : x - rand_val;
-  if ( ( tmp_val < min_val) || ( tmp_val > max_val ) ) {
-    tmp_val = is_plus_not_minus ? x - rand_val : x + rand_val;
-  }
-  return tmp_val;
+  #endif
 }
 
 static void draw_clock( void ) {
@@ -57,42 +47,11 @@ static void draw_clock( void ) {
   layer_mark_dirty( window_layer );
 }
 
-static void grect_setter( void *subject, GRect rect ) {
-  #ifdef DEBUG
-  APP_LOG( APP_LOG_LEVEL_INFO, "grect_setter()" );
-  #endif
-  HAND_LAYER_DATA *hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( (Layer *) subject );
-  hand_layer_data->current_rect = rect;
-  // print_rect( "grect_setter()", rect );
-}
-
-static GRect grect_getter( void *subject ) {
-  GRect rect = GRect( 0, 0, 0, 0 );
-  #ifdef DEBUG
-  APP_LOG( APP_LOG_LEVEL_INFO, "grect_getter()" );
-  #endif
-  HAND_LAYER_DATA *hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( (Layer *) subject );
-  rect = hand_layer_data->current_rect;
-  // print_rect( "grect_getter()", rect );
-  return rect;
-}
-
-static const PropertyAnimationImplementation hand_animation_implementation = {
-  .base = {
-    .update = (AnimationUpdateImplementation) property_animation_update_grect,
-  },
-    .accessors = {
-    .setter = { .grect = (const GRectSetter) grect_setter },
-    .getter = { .grect = (const GRectGetter) grect_getter },
-  },
-};
-
 static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   tm_time = *tick_time; // copy to global  
   #ifdef DEBUG
   APP_LOG( APP_LOG_LEVEL_INFO, "clock.c: handle_clock_tick(): %d:%02d:%02d", tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec );
   #endif
-  int mod_val = 10;
   uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
   uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
   HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
@@ -106,71 +65,10 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   // print_rect( "time_update_min", min_hand_layer_data->home_rect );
   
   if ( tm_time.tm_sec % 20 ) {
-    for ( int i = 0; i < NUM_DIGITS; i++ ) {
-      GRect current_frame = layer_get_frame( digit_layer[i] );
-      current_frame.origin.x = get_next_random_value( current_frame.origin.x, 0, PBL_DISPLAY_WIDTH - current_frame.size.w, mod_val );
-      current_frame.origin.y = get_next_random_value( current_frame.origin.y, 0, PBL_DISPLAY_HEIGHT - current_frame.size.h, mod_val );
-      ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->current_frame = current_frame;
-      layer_set_frame( digit_layer[i], current_frame );
-    }
-    hour_hand_layer_data->current_rect.origin.x = get_next_random_value( hour_hand_layer_data->current_rect.origin.x, 
-                                                                        0, PBL_DISPLAY_WIDTH, mod_val / 2 );
-    hour_hand_layer_data->current_rect.origin.y = get_next_random_value( hour_hand_layer_data->current_rect.origin.y, 
-                                                                        0, PBL_DISPLAY_HEIGHT, mod_val / 2 );
-    hour_hand_layer_data->current_rect.size.w = get_next_random_value( hour_hand_layer_data->current_rect.size.w, 
-                                                                        0, PBL_DISPLAY_WIDTH, mod_val / 2 );
-    hour_hand_layer_data->current_rect.size.h = get_next_random_value( hour_hand_layer_data->current_rect.size.h, 
-                                                                        0, PBL_DISPLAY_HEIGHT, mod_val / 2 );
-    min_hand_layer_data->current_rect.origin.x = get_next_random_value( min_hand_layer_data->current_rect.origin.x, 
-                                                                       0, PBL_DISPLAY_WIDTH, mod_val / 2 );
-    min_hand_layer_data->current_rect.origin.y = get_next_random_value( min_hand_layer_data->current_rect.origin.y, 
-                                                                       0, PBL_DISPLAY_HEIGHT, mod_val / 2 );
-    min_hand_layer_data->current_rect.size.w = get_next_random_value( min_hand_layer_data->current_rect.size.w, 
-                                                                     0, PBL_DISPLAY_WIDTH, mod_val / 2 );
-    min_hand_layer_data->current_rect.size.h = get_next_random_value( min_hand_layer_data->current_rect.size.h, 
-                                                                     0, PBL_DISPLAY_HEIGHT, mod_val / 2 );
+    randomize_clockface();    
   } else {
     tick_timer_service_unsubscribe();
-    
-    Animation **digit_animation_array = (Animation**) malloc( ( NUM_DIGITS + 2 ) * sizeof( Animation* ) );
-    Animation *digit_animation = 0;
-    for ( int i = 0; i < NUM_DIGITS; i++ ) {
-      digit_prop_animation = property_animation_create_layer_frame( digit_layer[i], 
-          &( ( ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->current_frame ), 
-          &( ( ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->home_frame ) );
-      
-      digit_animation = property_animation_get_animation( digit_prop_animation );
-  
-      animation_set_curve( digit_animation, AnimationCurveEaseOut );
-      animation_set_delay( digit_animation, ANIMATION_DELAY );
-      animation_set_duration( digit_animation, ANIMATION_DURATION );
-      digit_animation_array[i] = digit_animation;
-    }
-    
-    hour_hand_prop_animation = property_animation_create( &hand_animation_implementation, NULL, NULL, NULL );
-    property_animation_subject( hour_hand_prop_animation, (void *) &hour_layer, true );
-    property_animation_from( hour_hand_prop_animation, &( hour_hand_layer_data->current_rect ), sizeof( hour_hand_layer_data->current_rect ), true );
-    property_animation_to( hour_hand_prop_animation, &( hour_hand_layer_data->home_rect ), sizeof( hour_hand_layer_data->home_rect ), true );
-    Animation *hour_hand_animation = property_animation_get_animation( hour_hand_prop_animation );
-    animation_set_curve( hour_hand_animation, AnimationCurveEaseOut );
-    animation_set_delay( hour_hand_animation, ANIMATION_DELAY );
-    animation_set_duration( hour_hand_animation, ANIMATION_DURATION );
-    
-    min_hand_prop_animation = property_animation_create( &hand_animation_implementation, NULL, NULL, NULL );
-    property_animation_subject( min_hand_prop_animation, (void *) &min_layer, true );
-    property_animation_from( min_hand_prop_animation, &( min_hand_layer_data->current_rect ), sizeof( min_hand_layer_data->current_rect ), true );
-    property_animation_to( min_hand_prop_animation, &( min_hand_layer_data->home_rect ), sizeof( min_hand_layer_data->home_rect ), true );
-    Animation *min_hand_animation = property_animation_get_animation( min_hand_prop_animation );
-    animation_set_curve( min_hand_animation, AnimationCurveEaseOut );
-    animation_set_delay( min_hand_animation, ANIMATION_DELAY );
-    animation_set_duration( min_hand_animation, ANIMATION_DURATION );
-    
-    digit_animation_array[ NUM_DIGITS ] = hour_hand_animation;
-    digit_animation_array[ NUM_DIGITS + 1 ] = min_hand_animation;
-    Animation *spawn = animation_spawn_create_from_array( digit_animation_array, NUM_DIGITS + 4 );
-    animation_set_play_count( spawn, 1 );
-    animation_schedule( spawn );
-    free( digit_animation_array );
+    start_animation();
     tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
   }
 }
@@ -232,10 +130,6 @@ void clock_init( Window *window ) {
     layer_add_child( bitmap_layer_get_layer( clockface_layer ), digit_layer[i] );
   }
   
-  GPoint home_start_point;
-  GPoint home_end_point;
-  GPoint current_start_point;
-  GPoint current_end_point;
   HAND_LAYER_DATA *hand_layer_data = 0;
   
   hour_layer = layer_create_with_data( window_bounds, sizeof( HAND_LAYER_DATA ) );
@@ -262,11 +156,14 @@ void clock_init( Window *window ) {
 
   tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
   
+  // accel_tap_service_subscribe( start_animation );
+  
   draw_clock();
 }
 
 void clock_deinit( void ) {
   tick_timer_service_unsubscribe();
+
   if ( min_layer ) layer_destroy( min_layer );
   if ( hour_layer ) layer_destroy( hour_layer );
   for ( int i = 0; i < NUM_DIGITS; i ++ ) {

@@ -6,5 +6,4 @@
 #include <pebble.h>
 #include "global.h"
 
-void clock_init( Window* window );
-void clock_deinit( void );
+void start_animation( void );

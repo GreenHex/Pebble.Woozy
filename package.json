@@ -24,6 +24,18 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/Woozy Icon.png",
+                    "menuIcon": true,
+                    "name": "WOOZY_ICON",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/Clockface.png",
                     "name": "IMAGE_CLOCKFACE",
                     "targetPlatforms": [
@@ -46,5 +58,5 @@
             "watchface": true
         }
     },
-    "version": "1.0.0"
+    "version": "1.1.0"
 }

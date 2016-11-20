@@ -23,22 +23,26 @@ const uint32_t PBL_64_COLOURS[ NUM_PBL_64_COLOURS ] = {
 };
 #endif /* PBL_COLOR */
 
-static Layer *window_layer = 0;
-static BitmapLayer *clockface_layer = 0;
-static GBitmap *clockface_bitmap = 0;
-static char digit_str[3] = "0";
-
 extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
 extern tm tm_time;
 
+static Layer *window_layer = 0;
+static BitmapLayer *clockface_layer = 0;
+static GBitmap *clockface_bitmap = 0;
+static char digit_str[3] = "0";
+bool show_time = true;
+AppTimer *show_time_apptimer = 0;
+
 static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed );
+static void start_timer( AccelAxisType axis, int32_t direction );
 
 static void draw_clock( void ) {
   time_t now = time( NULL );
   tm_time = *localtime( &now ); // copy to global
   layer_mark_dirty( window_layer );
+  accel_tap_service_subscribe( start_timer );
 }
 
 static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
@@ -55,15 +59,13 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
   min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
   min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-  // print_rect( "time_update_hour", hour_hand_layer_data->home_rect );
-  // print_rect( "time_update_min", min_hand_layer_data->home_rect );
   
-  if ( tm_time.tm_sec % 20 ) {
-    randomize_clockface();    
+  if ( show_time ) {
+    hour_hand_layer_data->current_rect = hour_hand_layer_data->home_rect;
+    min_hand_layer_data->current_rect = min_hand_layer_data->home_rect;
+    layer_mark_dirty( window_layer );
   } else {
-    tick_timer_service_unsubscribe();
-    start_animation();
-    tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
+    randomize_clockface();    
   }
 }
 
@@ -72,7 +74,7 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   // graphics_context_set_fill_color( ctx, GColorLightGray );
   // graphics_fill_rect( ctx, layer_bounds, 0, GCornerNone );
   
-  graphics_context_set_text_color( ctx, GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ) );
+  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorBlack ) );
   snprintf( digit_str, sizeof( digit_str), "%u",  ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
@@ -84,16 +86,37 @@ static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {
   GPoint start_pt = GPoint( hand_layer_data->current_rect.origin.x, hand_layer_data->current_rect.origin.y );
   GPoint end_pt = GPoint( hand_layer_data->current_rect.size.w, hand_layer_data->current_rect.size.h );
   
-  graphics_context_set_stroke_color( ctx, BG_BITMAP_BG_COLOUR );
+  graphics_context_set_stroke_color( ctx, GColorWhite /* BG_BITMAP_BG_COLOUR */ );
   graphics_context_set_stroke_width( ctx, hand_layer_data->stroke_width + 2 );
   graphics_draw_line( ctx, start_pt, end_pt );
   
-  graphics_context_set_stroke_color( ctx, GColorFromHEX( hand_layer_data->colour ) );
+  graphics_context_set_stroke_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( hand_layer_data->colour ), GColorBlack ) );
   graphics_context_set_stroke_width( ctx, hand_layer_data->stroke_width );
   graphics_draw_line( ctx, start_pt, end_pt ); 
   
-  graphics_context_set_fill_color( ctx, GColorBlack );
+  graphics_context_set_fill_color( ctx, GColorWhite );
   graphics_fill_circle( ctx, start_pt, hand_layer_data->hole_radius );
+}
+
+static void timer_timeout_proc( void* data ) {
+  if ( show_time_apptimer ) app_timer_cancel( show_time_apptimer ); // just for fun.
+  show_time_apptimer = 0; // docs don't say if this is set to zero when timer expires. 
+  show_time = false;
+  accel_tap_service_subscribe( start_timer );
+}
+
+static void start_timer( AccelAxisType axis, int32_t direction ) {
+  show_time = true;
+  accel_tap_service_unsubscribe();
+  tick_timer_service_unsubscribe();
+  start_animation();
+  tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
+  
+  if ( show_time_apptimer ) {
+    app_timer_reschedule( show_time_apptimer, 10 * 1000 );
+  } else {
+    show_time_apptimer = app_timer_register( 10 * 1000, timer_timeout_proc, 0 );
+  }
 }
 
 void clock_init( Window *window ) {
@@ -106,7 +129,7 @@ void clock_init( Window *window ) {
   clockface_bitmap = gbitmap_create_with_resource( RESOURCE_ID_IMAGE_CLOCKFACE );
   bitmap_layer_set_bitmap( clockface_layer, clockface_bitmap );
   #else
-  window_set_background_color( window, GColorBlack );
+  window_set_background_color( window, GColorWhite );
   #endif
   
   GRect digit_layer_frame_rect;
@@ -150,12 +173,12 @@ void clock_init( Window *window ) {
 
   tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
   
-  // accel_tap_service_subscribe( start_animation );
-  
   draw_clock();
 }
 
 void clock_deinit( void ) {
+  if ( show_time_apptimer ) app_timer_cancel( show_time_apptimer );
+  accel_tap_service_unsubscribe();
   tick_timer_service_unsubscribe();
 
   if ( min_layer ) layer_destroy( min_layer );

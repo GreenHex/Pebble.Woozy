@@ -62,6 +62,7 @@ typedef struct {
 typedef struct {
   uint32_t colour;
   uint8_t stroke_width;
+  uint16_t hole_radius;
   GRect layer_frame;
   GRect home_rect;
   GRect current_rect;

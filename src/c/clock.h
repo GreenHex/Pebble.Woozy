@@ -6,6 +6,8 @@
 #include <pebble.h>
 #include "global.h"
 
+#define BG_BITMAP_BG_COLOUR GColorBlack
+
 #if PBL_DISPLAY_WIDTH == 200
 
 #else
@@ -13,7 +15,7 @@
 #define DIGIT_RECT_SIZE_H 21
 #define DIGIT_X_POS 36
 #define DIGIT_Y_POS 42
-#endif
+#endif /* PBL_DISPLAY_WIDTH */
 
 #define DIGIT_TXT_VERT_ADJ 2
 
@@ -34,11 +36,36 @@ static const GPathInfo DIGIT_LOCATIONS = {
   }
 };
 
+#if PBL_DISPLAY_WIDTH == 200
+
+#else
+#define HOUR_HAND_LENGTH 32
+#define HOUR_HAND_THK 9
+#define MIN_HAND_LENGTH 56
+#define MIN_HAND_THK 5
+#endif
+
+#define CLOCKFACE_CENTER ( GPoint( PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2 ) )
+#define HOUR_RECT ( GRect( PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2, PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2 - HOUR_HAND_LENGTH ) )
+#define MIN_RECT ( GRect( PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2, PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2 - MIN_HAND_LENGTH ) )
+
+#define ANIMATION_DELAY 0
+#define ANIMATION_DURATION 2000
+
 typedef struct {
   uint8_t digit;
+  uint32_t colour;
   GRect home_frame;
   GRect current_frame;
 } DIGIT_LAYER_DATA;
+
+typedef struct {
+  uint32_t colour;
+  uint8_t stroke_width;
+  GRect layer_frame;
+  GRect home_rect;
+  GRect current_rect;
+} HAND_LAYER_DATA;
 
 bool is_X_in_range( int a, int b, int x );
 void clock_init( Window* window );

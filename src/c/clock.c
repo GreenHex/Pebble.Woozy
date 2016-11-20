@@ -35,12 +35,6 @@ extern tm tm_time;
 
 static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed );
 
-static void print_rect( char *str, GRect rect ) {
-  #ifdef DEBUG
-  APP_LOG( APP_LOG_LEVEL_INFO, "%s: ( %d, %d, %d, %d )", str, rect.origin.x, rect.origin.y, rect.size.w, rect.size.h );
-  #endif
-}
-
 static void draw_clock( void ) {
   time_t now = time( NULL );
   tm_time = *localtime( &now ); // copy to global

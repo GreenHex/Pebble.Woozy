@@ -5,7 +5,7 @@
 #include <pebble.h>
 #include "animation.h"
 
-// extern Layer *digit_layer[];
+extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
 
@@ -13,23 +13,23 @@ static PropertyAnimation *digit_prop_animation = 0;
 static PropertyAnimation *hour_hand_prop_animation = 0;
 static PropertyAnimation *min_hand_prop_animation = 0;
 
-static void grect_setter( void *subject, GRect rect ) {
+static void print_rect( char *str, GRect rect ) {
   #ifdef DEBUG
-  APP_LOG( APP_LOG_LEVEL_INFO, "grect_setter()" );
+  APP_LOG( APP_LOG_LEVEL_INFO, "%s: ( %d, %d, %d, %d )", str, rect.origin.x, rect.origin.y, rect.size.w, rect.size.h );
   #endif
+}
+
+static void grect_setter( void *subject, GRect rect ) {
   HAND_LAYER_DATA *hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( (Layer *) subject );
   hand_layer_data->current_rect = rect;
-  // print_rect( "grect_setter()", rect );
+  print_rect( "grect_setter()", rect );
 }
 
 static GRect grect_getter( void *subject ) {
   GRect rect = GRect( 0, 0, 0, 0 );
-  #ifdef DEBUG
-  APP_LOG( APP_LOG_LEVEL_INFO, "grect_getter()" );
-  #endif
   HAND_LAYER_DATA *hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( (Layer *) subject );
   rect = hand_layer_data->current_rect;
-  // print_rect( "grect_getter()", rect );
+  print_rect( "grect_getter()", rect );
   return rect;
 }
 
@@ -38,8 +38,8 @@ static const PropertyAnimationImplementation hand_animation_implementation = {
     .update = (AnimationUpdateImplementation) property_animation_update_grect,
   },
     .accessors = {
-    .setter = { .grect = (const GRectSetter) grect_setter },
-    .getter = { .grect = (const GRectGetter) grect_getter },
+      .setter = { .grect = (const GRectSetter) grect_setter },
+      .getter = { .grect = (const GRectGetter) grect_getter },
   },
 };
 

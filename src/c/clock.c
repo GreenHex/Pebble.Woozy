@@ -41,7 +41,8 @@ static void start_timer( AccelAxisType axis, int32_t direction );
 static void draw_clock( void ) {
   time_t now = time( NULL );
   tm_time = *localtime( &now ); // copy to global
-  layer_mark_dirty( window_layer );
+  
+  // layer_mark_dirty( window_layer );
   
   // startup animation, need to do something about the repeating code
   uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
@@ -57,7 +58,7 @@ static void draw_clock( void ) {
   start_animation();
   // 
   tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
-  layer_mark_dirty( window_layer );
+  // layer_mark_dirty( window_layer );
   accel_tap_service_subscribe( start_timer );
 }
 

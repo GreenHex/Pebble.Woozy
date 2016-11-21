@@ -35,6 +35,7 @@ static char digit_str[3] = "0";
 bool show_time = true;
 AppTimer *show_time_apptimer = 0;
 
+static void timer_timeout_proc( void* data );
 static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed );
 static void start_timer( AccelAxisType axis, int32_t direction );
 
@@ -58,6 +59,7 @@ static void draw_clock( void ) {
   start_animation();
   // 
   tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
+  show_time_apptimer = app_timer_register( 20 * 1000, timer_timeout_proc, 0 );
   // layer_mark_dirty( window_layer );
   accel_tap_service_subscribe( start_timer );
 }
@@ -116,7 +118,7 @@ static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {
 }
 
 static void timer_timeout_proc( void* data ) {
-  if ( show_time_apptimer ) app_timer_cancel( show_time_apptimer ); // just for fun.
+  if ( show_time_apptimer ) app_timer_cancel( show_time_apptimer ); // just for fun, gives error
   show_time_apptimer = 0; // docs don't say if this is set to zero when timer expires. 
   show_time = false;
   accel_tap_service_subscribe( start_timer );

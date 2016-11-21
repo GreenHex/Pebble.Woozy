@@ -42,6 +42,22 @@ static void draw_clock( void ) {
   time_t now = time( NULL );
   tm_time = *localtime( &now ); // copy to global
   layer_mark_dirty( window_layer );
+  
+  // startup animation, need to do something about the repeating code
+  uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
+  uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
+  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
+  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
+
+  hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
+  hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+  min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
+  min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+
+  start_animation();
+  // 
+  tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
+  layer_mark_dirty( window_layer );
   accel_tap_service_subscribe( start_timer );
 }
 
@@ -132,17 +148,21 @@ void clock_init( Window *window ) {
   window_set_background_color( window, GColorBlack );
   #endif
   
-  GRect digit_layer_frame_rect;
+  GRect digit_layer_frame_home_rect;
+  GRect digit_layer_frame_current_rect;
   DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i ++ ) {
-    digit_layer_frame_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
-                                   DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H ); 
-    digit_layer[i] = layer_create_with_data( digit_layer_frame_rect, sizeof( DIGIT_LAYER_DATA ) );
+    digit_layer_frame_home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
+                                        DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H ); 
+    digit_layer_frame_current_rect = GRect( PBL_DISPLAY_WIDTH/2 - DIGIT_RECT_SIZE_W/2,
+                                           PBL_DISPLAY_HEIGHT/2 - DIGIT_RECT_SIZE_W/2,
+                                           DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );
+    digit_layer[i] = layer_create_with_data( digit_layer_frame_current_rect, sizeof( DIGIT_LAYER_DATA ) );
     digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] );
     digit_layer_data->digit = i + 1;
     digit_layer_data->colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF );
-    digit_layer_data->home_frame = digit_layer_frame_rect;
-    digit_layer_data->current_frame = digit_layer_frame_rect;
+    digit_layer_data->home_frame = digit_layer_frame_home_rect;
+    digit_layer_data->current_frame = digit_layer_frame_current_rect;
     layer_set_update_proc( digit_layer[i], digit_layer_update_proc );
     layer_add_child( bitmap_layer_get_layer( clockface_layer ), digit_layer[i] );
   }
@@ -170,8 +190,6 @@ void clock_init( Window *window ) {
   hand_layer_data->current_rect = MIN_RECT;
   layer_set_update_proc( min_layer, hand_layer_update_proc );
   layer_add_child( bitmap_layer_get_layer( clockface_layer ), min_layer );
-
-  tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
   
   draw_clock();
 }

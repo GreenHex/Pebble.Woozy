@@ -8,7 +8,7 @@
 extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
-
+  
 static PropertyAnimation *digit_prop_animation = 0;
 static PropertyAnimation *hour_hand_prop_animation = 0;
 static PropertyAnimation *min_hand_prop_animation = 0;
@@ -44,6 +44,8 @@ static const PropertyAnimationImplementation hand_animation_implementation = {
 };
 
 void start_animation( void ) {
+  tick_timer_service_unsubscribe();
+  
   HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
   HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
 

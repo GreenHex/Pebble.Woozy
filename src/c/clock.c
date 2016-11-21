@@ -43,8 +43,6 @@ static void draw_clock( void ) {
   time_t now = time( NULL );
   tm_time = *localtime( &now ); // copy to global
   
-  // layer_mark_dirty( window_layer );
-  
   // startup animation, need to do something about the repeating code
   uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
   uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
@@ -57,10 +55,8 @@ static void draw_clock( void ) {
   min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
 
   start_animation();
-  // 
-  tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
+  
   show_time_apptimer = app_timer_register( 20 * 1000, timer_timeout_proc, 0 );
-  // layer_mark_dirty( window_layer );
   accel_tap_service_subscribe( start_timer );
 }
 
@@ -121,16 +117,16 @@ static void timer_timeout_proc( void* data ) {
   if ( show_time_apptimer ) app_timer_cancel( show_time_apptimer ); // just for fun, gives error
   show_time_apptimer = 0; // docs don't say if this is set to zero when timer expires. 
   show_time = false;
+  tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
   accel_tap_service_subscribe( start_timer );
 }
 
 static void start_timer( AccelAxisType axis, int32_t direction ) {
   show_time = true;
   accel_tap_service_unsubscribe();
-  tick_timer_service_unsubscribe();
-  start_animation();
-  tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
   
+  start_animation();
+    
   if ( show_time_apptimer ) {
     app_timer_reschedule( show_time_apptimer, 10 * 1000 );
   } else {

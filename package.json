@@ -6,9 +6,6 @@
     "keywords": [],
     "name": "woozy",
     "pebble": {
-        "capabilities": [
-            "configurable"
-        ],
         "displayName": "Woozy",
         "enableMultiJS": true,
         "messageKeys": [

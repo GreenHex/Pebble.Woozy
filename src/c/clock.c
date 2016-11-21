@@ -74,7 +74,7 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   // graphics_context_set_fill_color( ctx, GColorLightGray );
   // graphics_fill_rect( ctx, layer_bounds, 0, GCornerNone );
   
-  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorBlack ) );
+  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
   snprintf( digit_str, sizeof( digit_str), "%u",  ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
@@ -86,15 +86,15 @@ static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {
   GPoint start_pt = GPoint( hand_layer_data->current_rect.origin.x, hand_layer_data->current_rect.origin.y );
   GPoint end_pt = GPoint( hand_layer_data->current_rect.size.w, hand_layer_data->current_rect.size.h );
   
-  graphics_context_set_stroke_color( ctx, GColorWhite /* BG_BITMAP_BG_COLOUR */ );
+  graphics_context_set_stroke_color( ctx, BG_BITMAP_BG_COLOUR );
   graphics_context_set_stroke_width( ctx, hand_layer_data->stroke_width + 2 );
   graphics_draw_line( ctx, start_pt, end_pt );
   
-  graphics_context_set_stroke_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( hand_layer_data->colour ), GColorBlack ) );
+  graphics_context_set_stroke_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( hand_layer_data->colour ), GColorWhite ) );
   graphics_context_set_stroke_width( ctx, hand_layer_data->stroke_width );
   graphics_draw_line( ctx, start_pt, end_pt ); 
   
-  graphics_context_set_fill_color( ctx, GColorWhite );
+  graphics_context_set_fill_color( ctx, GColorBlack );
   graphics_fill_circle( ctx, start_pt, hand_layer_data->hole_radius );
 }
 
@@ -129,7 +129,7 @@ void clock_init( Window *window ) {
   clockface_bitmap = gbitmap_create_with_resource( RESOURCE_ID_IMAGE_CLOCKFACE );
   bitmap_layer_set_bitmap( clockface_layer, clockface_bitmap );
   #else
-  window_set_background_color( window, GColorWhite );
+  window_set_background_color( window, GColorBlack );
   #endif
   
   GRect digit_layer_frame_rect;

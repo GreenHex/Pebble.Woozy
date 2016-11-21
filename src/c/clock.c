@@ -66,15 +66,14 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   APP_LOG( APP_LOG_LEVEL_INFO, "clock.c: handle_clock_tick(): %d:%02d:%02d", tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec );
   #endif
   uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
-  uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
-  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
+    uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
+    HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
+    HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
 
-  hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-  min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-  
+    hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
+    hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+    min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
+    min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
   if ( show_time ) {
     hour_hand_layer_data->current_rect = hour_hand_layer_data->home_rect;
     min_hand_layer_data->current_rect = min_hand_layer_data->home_rect;

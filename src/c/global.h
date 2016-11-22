@@ -14,7 +14,7 @@
 
 #else
 #define DIGIT_RECT_SIZE_W 24
-#define DIGIT_RECT_SIZE_H 21
+#define DIGIT_RECT_SIZE_H 23
 #define DIGIT_X_POS 36
 #define DIGIT_Y_POS 42
 #endif /* PBL_DISPLAY_WIDTH */
@@ -57,8 +57,8 @@ static const GPathInfo DIGIT_LOCATIONS = {
 typedef struct {
   uint8_t digit;
   uint32_t colour;
-  GRect home_frame;
-  GRect current_frame;
+  GRect home_rect;
+  GRect current_rect;
 } DIGIT_LAYER_DATA;
 
 typedef struct {
@@ -72,7 +72,9 @@ typedef struct {
 
 #define NUM_DIGITS 12
 
+BitmapLayer *clockface_layer;
 Layer *digit_layer[ NUM_DIGITS ];
 Layer *hour_layer;
 Layer *min_layer;
+
 tm tm_time;

@@ -23,17 +23,20 @@ const uint32_t PBL_64_COLOURS[ NUM_PBL_64_COLOURS ] = {
 };
 #endif /* PBL_COLOR */
 
+extern BitmapLayer *clockface_layer;
 extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
 extern tm tm_time;
 
 static Layer *window_layer = 0;
-static BitmapLayer *clockface_layer = 0;
 static GBitmap *clockface_bitmap = 0;
 static char digit_str[3] = "0";
-bool show_time = true;
-AppTimer *show_time_apptimer = 0;
+static bool show_time = true;
+static AppTimer *show_time_apptimer = 0;
+static GPoint center_pt = { 0 };
+static int16_t hour_hand_length = HOUR_HAND_LENGTH;
+static int16_t min_hand_length = MIN_HAND_LENGTH;
 
 static void timer_timeout_proc( void* data );
 static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed );
@@ -49,10 +52,10 @@ static void draw_clock( void ) {
   HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
   HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
 
-  hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-  min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+  hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
+  hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+  min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
+  min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
 
   start_animation();
   
@@ -70,10 +73,11 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
   HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
 
-  hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * HOUR_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-  min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * MIN_HAND_LENGTH / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+  hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
+  hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+  min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
+  min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+  
   if ( show_time ) {
     hour_hand_layer_data->current_rect = hour_hand_layer_data->home_rect;
     min_hand_layer_data->current_rect = min_hand_layer_data->home_rect;
@@ -88,8 +92,10 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   // graphics_context_set_fill_color( ctx, GColorLightGray );
   // graphics_fill_rect( ctx, layer_bounds, 0, GCornerNone );
   
+  layer_set_frame( layer, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->current_rect );
+  
   graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
-  snprintf( digit_str, sizeof( digit_str), "%u",  ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
+  snprintf( digit_str, sizeof( digit_str ), "%u",  ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL );
@@ -113,7 +119,6 @@ static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {
 }
 
 static void timer_timeout_proc( void* data ) {
-  if ( show_time_apptimer ) app_timer_cancel( show_time_apptimer ); // just for fun, gives error
   show_time_apptimer = 0; // docs don't say if this is set to zero when timer expires. 
   show_time = false;
   tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
@@ -133,6 +138,29 @@ static void start_timer( AccelAxisType axis, int32_t direction ) {
   }
 }
 
+static void prv_unobstructed_change( AnimationProgress progress, void *layer ) {
+  GRect full_bounds = layer_get_bounds( layer );
+  GRect unobstructed_bounds = layer_get_unobstructed_bounds( layer );
+  
+  int16_t full_height = full_bounds.size.h;
+  int16_t unobstructed_height = unobstructed_bounds.size.h;
+  
+  DIGIT_LAYER_DATA *digit_layer_data = 0;
+  for ( int i = 0; i < NUM_DIGITS; i++ ) {
+    digit_layer_data = layer_get_data( digit_layer[i] );
+    digit_layer_data->current_rect.origin.y = ( (uint32_t) digit_layer_data->home_rect.origin.y * unobstructed_height ) / full_height; 
+  }
+  HAND_LAYER_DATA *hand_layer_data = 0; 
+  hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
+  hand_layer_data->current_rect.origin.y = ( hand_layer_data->home_rect.origin.y * unobstructed_height ) / full_height;
+  hand_layer_data->current_rect.size.h = ( hand_layer_data->home_rect.size.h * unobstructed_height ) / full_height; 
+  hour_hand_length = ( HOUR_HAND_LENGTH * unobstructed_height ) / full_height; 
+  hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
+  hand_layer_data->current_rect.origin.y = ( hand_layer_data->home_rect.origin.y * unobstructed_height ) / full_height; 
+  hand_layer_data->current_rect.size.h = ( hand_layer_data->home_rect.size.h * unobstructed_height ) / full_height;
+  min_hand_length = ( MIN_HAND_LENGTH * unobstructed_height ) / full_height; 
+}
+
 void clock_init( Window *window ) {
   window_layer = window_get_root_layer( window );
   GRect window_bounds = layer_get_bounds( window_layer );
@@ -145,22 +173,22 @@ void clock_init( Window *window ) {
   #else
   window_set_background_color( window, GColorBlack );
   #endif
-  
+  GRect layer_uo_bounds = layer_get_unobstructed_bounds( bitmap_layer_get_layer( clockface_layer ) );
   GRect digit_layer_frame_home_rect;
   GRect digit_layer_frame_current_rect;
   DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i ++ ) {
     digit_layer_frame_home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
                                         DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H ); 
-    digit_layer_frame_current_rect = GRect( PBL_DISPLAY_WIDTH/2 - DIGIT_RECT_SIZE_W/2,
-                                           PBL_DISPLAY_HEIGHT/2 - DIGIT_RECT_SIZE_W/2,
+    digit_layer_frame_current_rect = GRect( layer_uo_bounds.size.w/2 - DIGIT_RECT_SIZE_W/2,
+                                           layer_uo_bounds.size.h/2 - DIGIT_RECT_SIZE_W/2,
                                            DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );
     digit_layer[i] = layer_create_with_data( digit_layer_frame_current_rect, sizeof( DIGIT_LAYER_DATA ) );
     digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] );
     digit_layer_data->digit = i + 1;
     digit_layer_data->colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF );
-    digit_layer_data->home_frame = digit_layer_frame_home_rect;
-    digit_layer_data->current_frame = digit_layer_frame_current_rect;
+    digit_layer_data->home_rect = digit_layer_frame_home_rect;
+    digit_layer_data->current_rect = digit_layer_frame_current_rect;
     layer_set_update_proc( digit_layer[i], digit_layer_update_proc );
     layer_add_child( bitmap_layer_get_layer( clockface_layer ), digit_layer[i] );
   }
@@ -190,10 +218,13 @@ void clock_init( Window *window ) {
   layer_add_child( bitmap_layer_get_layer( clockface_layer ), min_layer );
   
   draw_clock();
+  
+ unobstructed_area_service_subscribe( (UnobstructedAreaHandlers) { .change = prv_unobstructed_change }, bitmap_layer_get_layer( clockface_layer ) );
 }
 
 void clock_deinit( void ) {
   if ( show_time_apptimer ) app_timer_cancel( show_time_apptimer );
+  unobstructed_area_service_unsubscribe();
   accel_tap_service_unsubscribe();
   tick_timer_service_unsubscribe();
 

@@ -34,21 +34,21 @@ static const PropertyAnimationImplementation digit_animation_implementation = {
   },
 };
 
-static void grect_setter( void *subject, GRect rect ) {
+static void hand_grect_setter( void *subject, GRect rect ) {
   *((GRect *) subject) = rect;
 }
 
-static GRect grect_getter( void *subject ) {
+static GRect hand_grect_getter( void *subject ) {
   return *((GRect *) subject);
 }
 
-static const PropertyAnimationImplementation animation_implementation = {
+static const PropertyAnimationImplementation hand_animation_implementation = {
   .base = {
     .update = (AnimationUpdateImplementation) property_animation_update_grect,
   },
     .accessors = {
-      .setter = { .grect = (const GRectSetter) grect_setter },
-      .getter = { .grect = (const GRectGetter) grect_getter },
+      .setter = { .grect = (const GRectSetter) hand_grect_setter },
+      .getter = { .grect = (const GRectGetter) hand_grect_getter },
   },
 };
 
@@ -79,7 +79,7 @@ void start_animation( void ) {
   }
 
   HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  hour_hand_prop_animation = property_animation_create( &animation_implementation,
+  hour_hand_prop_animation = property_animation_create( &hand_animation_implementation,
                                                        (void *) &( hour_hand_layer_data->current_rect ), NULL, NULL );
   property_animation_from( hour_hand_prop_animation, &( hour_hand_layer_data->current_rect ),
                           sizeof( hour_hand_layer_data->current_rect ), true );
@@ -92,7 +92,7 @@ void start_animation( void ) {
   digit_animation_array[ NUM_DIGITS ] = hour_hand_animation;
   
   HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
-  min_hand_prop_animation = property_animation_create( &animation_implementation,
+  min_hand_prop_animation = property_animation_create( &hand_animation_implementation,
                                                       (void *) &( min_hand_layer_data->current_rect ), NULL, NULL );
   property_animation_from( min_hand_prop_animation, &( min_hand_layer_data->current_rect ),
                           sizeof( min_hand_layer_data->current_rect ), true );

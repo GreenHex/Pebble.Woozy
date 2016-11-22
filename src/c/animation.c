@@ -48,7 +48,7 @@ static GRect grect_getter( void *subject ) {
   return *((GRect *) subject);
 }
 
-static const PropertyAnimationImplementation hand_animation_implementation = {
+static const PropertyAnimationImplementation animation_implementation = {
   .base = {
     .update = (AnimationUpdateImplementation) property_animation_update_grect,
   },
@@ -61,11 +61,11 @@ static const PropertyAnimationImplementation hand_animation_implementation = {
 void start_animation( void ) {
   tick_timer_service_unsubscribe();
   
+  Animation **digit_animation_array = (Animation**) malloc( ( NUM_DIGITS + 2 ) * sizeof( Animation* ) );
   static PropertyAnimation *digit_prop_animation[NUM_DIGITS] = { 0 };
   static PropertyAnimation *hour_hand_prop_animation = 0;
   static PropertyAnimation *min_hand_prop_animation = 0;
-
-  Animation **digit_animation_array = (Animation**) malloc( ( NUM_DIGITS + 2 ) * sizeof( Animation* ) );
+  
   Animation *digit_animation = 0;
   DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
@@ -84,22 +84,28 @@ void start_animation( void ) {
     digit_animation_array[i] = digit_animation;
   }
 
-  HAND_LAYER_DATA *hour_hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  hour_hand_prop_animation = property_animation_create( &hand_animation_implementation, NULL, NULL, NULL );
-  property_animation_subject( hour_hand_prop_animation, (void *) &hour_layer, true );
-  property_animation_from( hour_hand_prop_animation, &( hour_hand_layer_data->current_rect ), sizeof( hour_hand_layer_data->current_rect ), true );
-  property_animation_to( hour_hand_prop_animation, &( hour_hand_layer_data->home_rect ), sizeof( hour_hand_layer_data->home_rect ), true );
+  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
+  hour_hand_prop_animation = property_animation_create( &animation_implementation,
+                                                       (void *) &( hour_hand_layer_data->current_rect ), NULL, NULL );
+  // property_animation_subject( hour_hand_prop_animation, (void *) &( hour_hand_layer_data->current_rect ), true );
+  property_animation_from( hour_hand_prop_animation, &( hour_hand_layer_data->current_rect ),
+                          sizeof( hour_hand_layer_data->current_rect ), true );
+  property_animation_to( hour_hand_prop_animation, &( hour_hand_layer_data->home_rect ),
+                        sizeof( hour_hand_layer_data->home_rect ), true );
   Animation *hour_hand_animation = property_animation_get_animation( hour_hand_prop_animation );
   animation_set_curve( hour_hand_animation, AnimationCurveEaseOut );
   animation_set_delay( hour_hand_animation, ANIMATION_DELAY );
   animation_set_duration( hour_hand_animation, ANIMATION_DURATION );
   digit_animation_array[ NUM_DIGITS ] = hour_hand_animation;
   
-  HAND_LAYER_DATA *min_hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( min_layer );
-  min_hand_prop_animation = property_animation_create( &hand_animation_implementation, NULL, NULL, NULL );
-  property_animation_subject( min_hand_prop_animation, (void *) &min_layer, true );
-  property_animation_from( min_hand_prop_animation, &( min_hand_layer_data->current_rect ), sizeof( min_hand_layer_data->current_rect ), true );
-  property_animation_to( min_hand_prop_animation, &( min_hand_layer_data->home_rect ), sizeof( min_hand_layer_data->home_rect ), true );
+  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
+  min_hand_prop_animation = property_animation_create( &animation_implementation,
+                                                      (void *) &( min_hand_layer_data->current_rect ), NULL, NULL );
+  // property_animation_subject( min_hand_prop_animation, (void *) &( min_hand_layer_data->current_rect ), true );
+  property_animation_from( min_hand_prop_animation, &( min_hand_layer_data->current_rect ),
+                          sizeof( min_hand_layer_data->current_rect ), true );
+  property_animation_to( min_hand_prop_animation, &( min_hand_layer_data->home_rect ),
+                        sizeof( min_hand_layer_data->home_rect ), true );
   Animation *min_hand_animation = property_animation_get_animation( min_hand_prop_animation );
   animation_set_curve( min_hand_animation, AnimationCurveEaseOut );
   animation_set_delay( min_hand_animation, ANIMATION_DELAY );

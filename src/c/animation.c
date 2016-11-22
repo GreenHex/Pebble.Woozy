@@ -16,18 +16,12 @@ static void print_rect( char *str, GRect rect ) {
 }
 
 static void digit_grect_setter( void *subject, GRect rect ) {
-  DIGIT_LAYER_DATA *digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject );
-  digit_layer_data->current_rect = rect;
+  ( ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect = rect;
   layer_mark_dirty( (Layer *) subject );
-  print_rect( "digit_grect_setter()", rect );
 }
 
 static GRect digit_grect_getter( void *subject ) {
-  GRect rect = GRect( 0, 0, 0, 0 );
-  DIGIT_LAYER_DATA *digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject );
-  rect = digit_layer_data->current_rect;
-  print_rect( "digit_grect_getter()", rect );
-  return rect;
+  return ( ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect;
 }
 
 static const PropertyAnimationImplementation digit_animation_implementation = {
@@ -87,7 +81,6 @@ void start_animation( void ) {
   HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
   hour_hand_prop_animation = property_animation_create( &animation_implementation,
                                                        (void *) &( hour_hand_layer_data->current_rect ), NULL, NULL );
-  // property_animation_subject( hour_hand_prop_animation, (void *) &( hour_hand_layer_data->current_rect ), true );
   property_animation_from( hour_hand_prop_animation, &( hour_hand_layer_data->current_rect ),
                           sizeof( hour_hand_layer_data->current_rect ), true );
   property_animation_to( hour_hand_prop_animation, &( hour_hand_layer_data->home_rect ),
@@ -101,7 +94,6 @@ void start_animation( void ) {
   HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
   min_hand_prop_animation = property_animation_create( &animation_implementation,
                                                       (void *) &( min_hand_layer_data->current_rect ), NULL, NULL );
-  // property_animation_subject( min_hand_prop_animation, (void *) &( min_hand_layer_data->current_rect ), true );
   property_animation_from( min_hand_prop_animation, &( min_hand_layer_data->current_rect ),
                           sizeof( min_hand_layer_data->current_rect ), true );
   property_animation_to( min_hand_prop_animation, &( min_hand_layer_data->home_rect ),

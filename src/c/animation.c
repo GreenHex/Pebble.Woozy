@@ -78,7 +78,7 @@ void start_animation( void ) {
                           sizeof( digit_layer_data->home_rect ), true ); 
     
     digit_animation = property_animation_get_animation( digit_prop_animation[i] );
-    animation_set_curve( digit_animation, AnimationCurveEaseOut );
+    animation_set_curve( digit_animation, AnimationCurveEaseIn );
     animation_set_delay( digit_animation, ANIMATION_DELAY );
     animation_set_duration( digit_animation, ANIMATION_DURATION );
     digit_animation_array[i] = digit_animation;
@@ -93,7 +93,7 @@ void start_animation( void ) {
   property_animation_to( hour_hand_prop_animation, &( hour_hand_layer_data->home_rect ),
                         sizeof( hour_hand_layer_data->home_rect ), true );
   Animation *hour_hand_animation = property_animation_get_animation( hour_hand_prop_animation );
-  animation_set_curve( hour_hand_animation, AnimationCurveEaseOut );
+  animation_set_curve( hour_hand_animation, AnimationCurveEaseIn );
   animation_set_delay( hour_hand_animation, ANIMATION_DELAY );
   animation_set_duration( hour_hand_animation, ANIMATION_DURATION );
   digit_animation_array[ NUM_DIGITS ] = hour_hand_animation;
@@ -107,7 +107,7 @@ void start_animation( void ) {
   property_animation_to( min_hand_prop_animation, &( min_hand_layer_data->home_rect ),
                         sizeof( min_hand_layer_data->home_rect ), true );
   Animation *min_hand_animation = property_animation_get_animation( min_hand_prop_animation );
-  animation_set_curve( min_hand_animation, AnimationCurveEaseOut );
+  animation_set_curve( min_hand_animation, AnimationCurveEaseIn );
   animation_set_delay( min_hand_animation, ANIMATION_DELAY );
   animation_set_duration( min_hand_animation, ANIMATION_DURATION );
   digit_animation_array[ NUM_DIGITS + 1 ] = min_hand_animation;

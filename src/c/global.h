@@ -15,8 +15,8 @@
 #else
 #define DIGIT_RECT_SIZE_W 24
 #define DIGIT_RECT_SIZE_H 23
-#define DIGIT_X_POS 36
-#define DIGIT_Y_POS 42
+#define DIGIT_X_POS 42
+#define DIGIT_Y_POS 38
 #endif /* PBL_DISPLAY_WIDTH */
 
 #define DIGIT_TXT_VERT_ADJ 2
@@ -41,9 +41,9 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #if PBL_DISPLAY_WIDTH == 200
 
 #else
-#define HOUR_HAND_LENGTH 32
+#define HOUR_HAND_LENGTH 30
 #define HOUR_HAND_THK 9
-#define MIN_HAND_LENGTH 56
+#define MIN_HAND_LENGTH 50
 #define MIN_HAND_THK 5
 #endif
 

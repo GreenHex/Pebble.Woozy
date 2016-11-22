@@ -143,7 +143,7 @@ static void prv_unobstructed_change( AnimationProgress progress, void *layer ) {
   GRect unobstructed_bounds = layer_get_unobstructed_bounds( layer );
   
   int16_t full_height = full_bounds.size.h;
-  int16_t unobstructed_height = unobstructed_bounds.size.h;
+  int16_t unobstructed_height = unobstructed_bounds.size.h - PBL_IF_COLOR_ELSE( 1, 2 );
   
   DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i++ ) {

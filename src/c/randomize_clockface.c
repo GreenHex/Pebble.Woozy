@@ -26,10 +26,10 @@ void randomize_clockface( void ) {
   int16_t display_width = layer_uo_bounds.size.w;
   int16_t display_height = layer_uo_bounds.size.h;
   
+  srand ( time( NULL ) );
+  
   int mod_val = 10;
-  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
-
+  
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
     GRect current_rect = layer_get_frame( digit_layer[i] );
     current_rect.origin.x = get_next_random_value( current_rect.origin.x, 0, display_width - current_rect.size.w, mod_val );
@@ -38,6 +38,7 @@ void randomize_clockface( void ) {
     layer_set_frame( digit_layer[i], current_rect );
   }
   
+  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
   hour_hand_layer_data->current_rect.origin.x = get_next_random_value( hour_hand_layer_data->current_rect.origin.x, 
                                                                       0, display_width, mod_val / 2 );
   hour_hand_layer_data->current_rect.origin.y = get_next_random_value( hour_hand_layer_data->current_rect.origin.y, 
@@ -46,6 +47,8 @@ void randomize_clockface( void ) {
                                                                     0, display_width, mod_val / 2 );
   hour_hand_layer_data->current_rect.size.h = get_next_random_value( hour_hand_layer_data->current_rect.size.h, 
                                                                     0, display_height, mod_val / 2 );
+  
+  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
   min_hand_layer_data->current_rect.origin.x = get_next_random_value( min_hand_layer_data->current_rect.origin.x, 
                                                                      0, display_width, mod_val / 2 );
   min_hand_layer_data->current_rect.origin.y = get_next_random_value( min_hand_layer_data->current_rect.origin.y, 

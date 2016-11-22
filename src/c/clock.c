@@ -7,6 +7,7 @@
 #include "clock.h"
 #include "animation.h"
 #include "randomize_clockface.h"
+#include "swap.h"
 
 #if defined( PBL_COLOR )
 #define NUM_PBL_64_COLOURS 64
@@ -28,6 +29,7 @@ extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
 extern tm tm_time;
+int rand_digit_order[ NUM_DIGITS ] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
 static Layer *window_layer = 0;
 static GBitmap *clockface_bitmap = 0;
@@ -48,16 +50,16 @@ static void draw_clock( void ) {
   
   // startup animation, need to do something about the repeating code
   uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
-  uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
   HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
-
   hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
   hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+  
+  uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
+  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
   min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
   min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
 
-  start_animation();
+  start_animation( 0, 2000, true );
   
   show_time_apptimer = app_timer_register( 20 * 1000, timer_timeout_proc, 0 );
   accel_tap_service_subscribe( start_timer );
@@ -68,13 +70,14 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   #ifdef DEBUG
   APP_LOG( APP_LOG_LEVEL_INFO, "clock.c: handle_clock_tick(): %d:%02d:%02d", tm_time.tm_hour, tm_time.tm_min, tm_time.tm_sec );
   #endif
-  uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
-  uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
-  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
 
+  uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
+  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
   hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
   hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
+  
+  uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
+  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
   min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
   min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
   
@@ -129,7 +132,7 @@ static void start_timer( AccelAxisType axis, int32_t direction ) {
   show_time = true;
   accel_tap_service_unsubscribe();
   
-  start_animation();
+  start_animation( 0, 2000, true );
     
   if ( show_time_apptimer ) {
     app_timer_reschedule( show_time_apptimer, 10 * 1000 );
@@ -165,6 +168,7 @@ void clock_init( Window *window ) {
   window_layer = window_get_root_layer( window );
   GRect window_bounds = layer_get_bounds( window_layer );
   
+  randomize( rand_digit_order, NUM_DIGITS );
   clockface_layer = bitmap_layer_create( window_bounds );
   layer_add_child( window_layer, bitmap_layer_get_layer( clockface_layer ) );
   #ifdef SHOW_BACKGROUND_BITMAP_IMAGE
@@ -178,7 +182,8 @@ void clock_init( Window *window ) {
   GRect digit_layer_frame_current_rect;
   DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i ++ ) {
-    digit_layer_frame_home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
+    digit_layer_frame_home_rect = GRect( DIGIT_LOCATIONS.points[ rand_digit_order[i] ].x,
+                                        DIGIT_LOCATIONS.points[ rand_digit_order[i] ].y,
                                         DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H ); 
     digit_layer_frame_current_rect = GRect( layer_uo_bounds.size.w/2 - DIGIT_RECT_SIZE_W/2,
                                            layer_uo_bounds.size.h/2 - DIGIT_RECT_SIZE_W/2,
@@ -219,7 +224,7 @@ void clock_init( Window *window ) {
   
   draw_clock();
   
- unobstructed_area_service_subscribe( (UnobstructedAreaHandlers) { .change = prv_unobstructed_change }, bitmap_layer_get_layer( clockface_layer ) );
+  unobstructed_area_service_subscribe( (UnobstructedAreaHandlers) { .change = prv_unobstructed_change }, bitmap_layer_get_layer( clockface_layer ) );
 }
 
 void clock_deinit( void ) {

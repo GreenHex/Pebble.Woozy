@@ -137,7 +137,7 @@ static void start_timer( AccelAxisType axis, int32_t direction ) {
   show_time = true;
   accel_tap_service_unsubscribe();
   
-  start_animation( 0, 2000, false );
+  start_animation( 0, 1000, false );
 
   show_time_apptimer = app_timer_register( 10 * 1000, timer_timeout_proc, 0 );
 }

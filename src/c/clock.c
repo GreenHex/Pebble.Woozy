@@ -97,8 +97,6 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   // graphics_context_set_fill_color( ctx, GColorLightGray );
   // graphics_fill_rect( ctx, layer_bounds, 0, GCornerNone );
   
-  layer_set_frame( layer, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->current_rect );
-  
   graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
   snprintf( digit_str, sizeof( digit_str ), "%u",  ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;

@@ -4,9 +4,9 @@
         "pebble-clay": "^1.0.2"
     },
     "keywords": [],
-    "name": "woozy",
+    "name": "kiddie",
     "pebble": {
-        "displayName": "Woozy",
+        "displayName": "Kiddie",
         "enableMultiJS": true,
         "messageKeys": [
             "ANALOG_SECONDS_DISPLAY_TIMEOUT_SECS",

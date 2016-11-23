@@ -21,6 +21,17 @@
         "resources": {
             "media": [
                 {
+                    "file": "images/Oops.png",
+                    "name": "IMAGE_ICON_OOPS",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "bitmap"
+                },
+                {
                     "file": "images/Woozy Icon.png",
                     "menuIcon": true,
                     "name": "WOOZY_ICON",

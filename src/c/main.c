@@ -6,7 +6,7 @@
 #include "global.h"
 #include "clock.h"
 
-static Window *window;
+static Window *window = 0;
 
 static void window_load( Window *window ) {
   clock_init( window );

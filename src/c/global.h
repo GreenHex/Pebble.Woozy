@@ -51,6 +51,12 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define HOUR_RECT ( GRect( PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2, PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2 - HOUR_HAND_LENGTH ) )
 #define MIN_RECT ( GRect( PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2, PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2 - MIN_HAND_LENGTH ) )
 
+#define ICON_OOPS_SIZE_X 64
+#define ICON_OOPS_SIZE_Y 64
+#define ICON_OOPS_LOC_X ( PBL_DISPLAY_WIDTH/2 - ICON_OOPS_SIZE_X/2 )
+#define ICON_OOPS_LOC_Y ( PBL_DISPLAY_HEIGHT/2 - ICON_OOPS_SIZE_Y/2 + 10 )
+#define OOPS_RECT ( GRect( ICON_OOPS_LOC_X, ICON_OOPS_LOC_Y, ICON_OOPS_SIZE_X, ICON_OOPS_SIZE_Y ) )
+
 typedef struct {
   uint8_t digit;
   uint32_t colour;
@@ -73,5 +79,6 @@ BitmapLayer *clockface_layer;
 Layer *digit_layer[ NUM_DIGITS ];
 Layer *hour_layer;
 Layer *min_layer;
-
+BitmapLayer *oops_layer;
+GBitmap *oops_bitmap;
 tm tm_time;

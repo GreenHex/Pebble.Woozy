@@ -28,9 +28,11 @@ extern BitmapLayer *clockface_layer;
 extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
+extern BitmapLayer *oops_layer;
+extern GBitmap *oops_bitmap;
 extern tm tm_time;
-int rand_digit_order[ NUM_DIGITS ] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
+int rand_digit_order[ NUM_DIGITS ] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 static Layer *window_layer = 0;
 static GBitmap *clockface_bitmap = 0;
 static char digit_str[3] = "0";
@@ -119,6 +121,11 @@ static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {
   
   graphics_context_set_fill_color( ctx, GColorBlack );
   graphics_fill_circle( ctx, start_pt, hand_layer_data->hole_radius );
+}
+
+static void oops_layer_update_proc( Layer *layer, GContext *ctx ) {
+  graphics_context_set_compositing_mode( ctx, GCompOpSet );
+  graphics_draw_bitmap_in_rect( ctx, oops_bitmap, layer_get_bounds( layer ) );
 }
 
 static void timer_timeout_proc( void* data ) {
@@ -222,6 +229,12 @@ void clock_init( Window *window ) {
   layer_set_update_proc( min_layer, hand_layer_update_proc );
   layer_add_child( bitmap_layer_get_layer( clockface_layer ), min_layer );
   
+  oops_bitmap = gbitmap_create_with_resource( RESOURCE_ID_IMAGE_ICON_OOPS );
+  oops_layer = bitmap_layer_create( OOPS_RECT );
+  layer_set_update_proc( bitmap_layer_get_layer( oops_layer ), oops_layer_update_proc );
+  layer_add_child( min_layer, bitmap_layer_get_layer( oops_layer ) );
+  layer_set_hidden( bitmap_layer_get_layer( oops_layer ), true );
+  
   draw_clock();
   
   unobstructed_area_service_subscribe( (UnobstructedAreaHandlers) { .change = prv_unobstructed_change }, bitmap_layer_get_layer( clockface_layer ) );
@@ -233,6 +246,8 @@ void clock_deinit( void ) {
   accel_tap_service_unsubscribe();
   tick_timer_service_unsubscribe();
 
+  if ( oops_bitmap ) gbitmap_destroy( oops_bitmap );
+  if ( oops_layer ) bitmap_layer_destroy( oops_layer );
   if ( min_layer ) layer_destroy( min_layer );
   if ( hour_layer ) layer_destroy( hour_layer );
   for ( int i = 0; i < NUM_DIGITS; i ++ ) {

@@ -26,12 +26,12 @@ void randomize_clockface( void ) {
   int16_t display_width = layer_uo_bounds.size.w;
   int16_t display_height = layer_uo_bounds.size.h;
   
-  srand ( time( NULL ) );
+  srand ( time( NULL ) % rand() );
   
   int mod_val = 10;
   
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
-    GRect current_rect = layer_get_frame( digit_layer[i] );
+    GRect current_rect = ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->current_rect; // layer_get_frame( digit_layer[i] );
     current_rect.origin.x = get_next_random_value( current_rect.origin.x, 0, display_width - current_rect.size.w, mod_val );
     current_rect.origin.y = get_next_random_value( current_rect.origin.y, 0, display_height - current_rect.size.h, mod_val );
     ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->current_rect = current_rect;

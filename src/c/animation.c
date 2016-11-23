@@ -3,11 +3,16 @@
 //
 
 #include <pebble.h>
+#include "global.h"
 #include "animation.h"
 
+// #define DEBUG
+
+extern BitmapLayer *clockface_layer;
 extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
+extern BitmapLayer *oops_layer;
 
 #define NUM_ANIMATIONS ( NUM_DIGITS + 2 )
 
@@ -19,8 +24,21 @@ static void print_rect( char *str, GRect rect ) {
   #endif
 }
 
+static void start_second_animation( void *data ) { 
+  DIGIT_LAYER_DATA *digit_layer_data = 0;
+  GRect digit_layer_frame_home_rect;
+  for ( int i = 0; i < NUM_DIGITS; i ++ ) {
+    digit_layer_frame_home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
+                                        DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H ); 
+    digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] );
+    digit_layer_data->home_rect = digit_layer_frame_home_rect;
+  }
+  start_animation( 0, 2000, false );
+}
+
 static void digit_grect_setter( void *subject, GRect rect ) {
   ( ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect = rect;
+  print_rect( "setter:", rect );
   layer_mark_dirty( (Layer *) subject );
 }
 
@@ -28,19 +46,11 @@ static GRect digit_grect_getter( void *subject ) {
   return ( ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect;
 }
 
-
 static void digit_animation_implementation_teardown( Animation *animation ) {
   if ( second_animation ) {
     second_animation = false;
-    DIGIT_LAYER_DATA *digit_layer_data = 0;
-    GRect digit_layer_frame_home_rect;
-    for ( int i = 0; i < NUM_DIGITS; i ++ ) {
-      digit_layer_frame_home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
-                                          DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H ); 
-      digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] );
-      digit_layer_data->home_rect = digit_layer_frame_home_rect;
-    }
-    start_animation( 200, 2000, false );
+    layer_set_hidden( bitmap_layer_get_layer( oops_layer ), false );
+    app_timer_register( 500, start_second_animation, 0 );
   }
 }
 
@@ -142,4 +152,5 @@ void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) 
   animation_set_play_count( spawn, 1 );
   animation_schedule( spawn );
   free( digit_animation_array );
+  layer_set_hidden( bitmap_layer_get_layer( oops_layer ), true );
 }

@@ -139,13 +139,9 @@ static void start_timer( AccelAxisType axis, int32_t direction ) {
   show_time = true;
   accel_tap_service_unsubscribe();
   
-  start_animation( 0, 2000, true );
-    
-  if ( show_time_apptimer ) {
-    app_timer_reschedule( show_time_apptimer, 10 * 1000 );
-  } else {
-    show_time_apptimer = app_timer_register( 10 * 1000, timer_timeout_proc, 0 );
-  }
+  start_animation( 0, 2000, false );
+
+  show_time_apptimer = app_timer_register( 10 * 1000, timer_timeout_proc, 0 );
 }
 
 static void prv_unobstructed_change( AnimationProgress progress, void *layer ) {

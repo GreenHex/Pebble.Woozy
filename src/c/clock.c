@@ -147,12 +147,13 @@ static void prv_unobstructed_change( AnimationProgress progress, void *layer ) {
   GRect unobstructed_bounds = layer_get_unobstructed_bounds( layer );
   
   int16_t full_height = full_bounds.size.h;
-  int16_t unobstructed_height = unobstructed_bounds.size.h - PBL_IF_COLOR_ELSE( 1, 2 );
+  int16_t unobstructed_height = unobstructed_bounds.size.h - PBL_IF_COLOR_ELSE( 2, 2 );
   
   DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
     digit_layer_data = layer_get_data( digit_layer[i] );
     digit_layer_data->current_rect.origin.y = ( (uint32_t) digit_layer_data->home_rect.origin.y * unobstructed_height ) / full_height; 
+    layer_set_frame( digit_layer[i], ( ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->current_rect );
   }
   HAND_LAYER_DATA *hand_layer_data = 0; 
   hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
@@ -162,7 +163,7 @@ static void prv_unobstructed_change( AnimationProgress progress, void *layer ) {
   hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
   hand_layer_data->current_rect.origin.y = ( hand_layer_data->home_rect.origin.y * unobstructed_height ) / full_height; 
   hand_layer_data->current_rect.size.h = ( hand_layer_data->home_rect.size.h * unobstructed_height ) / full_height;
-  min_hand_length = ( MIN_HAND_LENGTH * unobstructed_height ) / full_height; 
+  min_hand_length = ( MIN_HAND_LENGTH * unobstructed_height ) / full_height;
 }
 
 void clock_init( Window *window ) {

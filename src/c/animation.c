@@ -18,6 +18,12 @@ extern BitmapLayer *oops_layer;
 
 static bool second_animation = true;
 
+static uint32_t const one_segment[] = { 200, 200 };
+VibePattern single_vibe_pattern = {
+  .durations = one_segment,
+  .num_segments = ARRAY_LENGTH( one_segment ),
+};
+
 static void print_rect( char *str, GRect rect ) {
   #ifdef DEBUG
   APP_LOG( APP_LOG_LEVEL_INFO, "%s: ( %d, %d, %d, %d )", str, rect.origin.x, rect.origin.y, rect.size.w, rect.size.h );
@@ -50,6 +56,7 @@ static GRect digit_grect_getter( void *subject ) {
 static void digit_animation_implementation_teardown( Animation *animation ) {
   if ( second_animation ) {
     second_animation = false;
+    vibes_enqueue_custom_pattern( single_vibe_pattern );
     layer_set_hidden( bitmap_layer_get_layer( oops_layer ), false );
     app_timer_register( 500, start_second_animation, 0 );
   }

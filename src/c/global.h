@@ -57,9 +57,12 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define ICON_OOPS_LOC_Y ( PBL_DISPLAY_HEIGHT/2 - ICON_OOPS_SIZE_Y/2 + 6 )
 #define OOPS_RECT ( GRect( ICON_OOPS_LOC_X, ICON_OOPS_LOC_Y, ICON_OOPS_SIZE_X, ICON_OOPS_SIZE_Y ) )
 
+#define SHOW_TIME_HOWTIMER_TIMEOUT ( 10 * 1000 )
+
 typedef struct {
   uint8_t digit;
   uint32_t colour;
+  GTextAlignment text_alignment;
   GRect home_rect;
   GRect current_rect;
 } DIGIT_LAYER_DATA;

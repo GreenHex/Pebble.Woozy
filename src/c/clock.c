@@ -101,7 +101,7 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   snprintf( digit_str, sizeof( digit_str ), "%u",  ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
-                     GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL );
+                     GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
 }
 
 static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {
@@ -130,16 +130,18 @@ static void timer_timeout_proc( void* data ) {
   show_time_apptimer = 0; // docs don't say if this is set to zero when timer expires. 
   show_time = false;
   tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
-  accel_tap_service_subscribe( start_timer );
 }
 
 static void start_timer( AccelAxisType axis, int32_t direction ) {
   show_time = true;
-  accel_tap_service_unsubscribe();
-  
-  start_animation( 0, 1000, false );
 
-  show_time_apptimer = app_timer_register( 10 * 1000, timer_timeout_proc, 0 );
+  start_animation( 0, 1000, false ); // tick timer service unsubscribed here
+
+  if ( show_time_apptimer ) {
+    app_timer_reschedule( show_time_apptimer, SHOW_TIME_HOWTIMER_TIMEOUT );
+  } else {
+    show_time_apptimer = app_timer_register( SHOW_TIME_HOWTIMER_TIMEOUT, timer_timeout_proc, 0 );
+  }
 }
 
 static void prv_unobstructed_change( AnimationProgress progress, void *layer ) {
@@ -194,6 +196,14 @@ void clock_init( Window *window ) {
     digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] );
     digit_layer_data->digit = i + 1;
     digit_layer_data->colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF );
+    /* if ( ( digit_layer_data->digit > 1 ) && ( digit_layer_data->digit < 5 ) ) {
+      digit_layer_data->text_alignment = GTextAlignmentRight;
+    } else if ( ( digit_layer_data->digit > 7 ) && ( digit_layer_data->digit < 11 ) ) {
+      digit_layer_data->text_alignment = GTextAlignmentLeft;
+    } else {
+      digit_layer_data->text_alignment = GTextAlignmentCenter;
+    } */
+    digit_layer_data->text_alignment = GTextAlignmentCenter;
     digit_layer_data->home_rect = digit_layer_frame_home_rect;
     digit_layer_data->current_rect = digit_layer_frame_current_rect;
     layer_set_update_proc( digit_layer[i], digit_layer_update_proc );

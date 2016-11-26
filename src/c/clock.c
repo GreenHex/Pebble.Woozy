@@ -42,7 +42,7 @@ static GPoint center_pt = { 0 };
 static int16_t hour_hand_length = HOUR_HAND_LENGTH;
 static int16_t min_hand_length = MIN_HAND_LENGTH;
 
-static void timer_timeout_proc( void* data );
+static void show_time_timeout_proc( void* data );
 static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed );
 static void start_timer( AccelAxisType axis, int32_t direction );
 
@@ -63,7 +63,7 @@ static void draw_clock( void ) {
 
   start_animation( 0, 2000, true );
   
-  show_time_apptimer = app_timer_register( 20 * 1000, timer_timeout_proc, 0 );
+  show_time_apptimer = app_timer_register( 20 * 1000, show_time_timeout_proc, 0 );
   accel_tap_service_subscribe( start_timer );
 }
 
@@ -126,7 +126,7 @@ static void oops_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_draw_bitmap_in_rect( ctx, oops_bitmap, layer_get_bounds( layer ) );
 }
 
-static void timer_timeout_proc( void* data ) {
+static void show_time_timeout_proc( void* data ) {
   show_time_apptimer = 0; // docs don't say if this is set to zero when timer expires. 
   show_time = false;
   tick_timer_service_subscribe( SECOND_UNIT, handle_clock_tick );
@@ -140,7 +140,7 @@ static void start_timer( AccelAxisType axis, int32_t direction ) {
   if ( show_time_apptimer ) {
     app_timer_reschedule( show_time_apptimer, SHOW_TIME_HOWTIMER_TIMEOUT );
   } else {
-    show_time_apptimer = app_timer_register( SHOW_TIME_HOWTIMER_TIMEOUT, timer_timeout_proc, 0 );
+    show_time_apptimer = app_timer_register( SHOW_TIME_HOWTIMER_TIMEOUT, show_time_timeout_proc, 0 );
   }
 }
 

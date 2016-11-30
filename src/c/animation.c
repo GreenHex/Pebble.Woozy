@@ -24,27 +24,23 @@ VibePattern single_vibe_pattern = {
   .num_segments = ARRAY_LENGTH( one_segment ),
 };
 
-static void print_rect( char *str, GRect rect ) {
+static void log_rect( char *str, GRect rect ) {
   #ifdef DEBUG
   APP_LOG( APP_LOG_LEVEL_INFO, "%s: ( %d, %d, %d, %d )", str, rect.origin.x, rect.origin.y, rect.size.w, rect.size.h );
   #endif
 }
 
 static void start_second_animation( void *data ) { 
-  DIGIT_LAYER_DATA *digit_layer_data = 0;
-  GRect digit_layer_frame_home_rect;
-  for ( int i = 0; i < NUM_DIGITS; i ++ ) {
-    digit_layer_frame_home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
-                                        DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H ); 
-    digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] );
-    digit_layer_data->home_rect = digit_layer_frame_home_rect;
+  for ( int i = 0; i < NUM_DIGITS; i ++ ) { 
+    ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
+                                                                                 DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );;
   }
   start_animation( 200, 1000, false );
 }
 
 static void digit_grect_setter( void *subject, GRect rect ) {
-  ( ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect = rect;
-  print_rect( "setter:", rect );
+  ( (DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect = rect;
+  log_rect( "setter:", rect );
   layer_set_frame( (Layer *) subject, ( ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect );
   layer_mark_dirty( (Layer *) subject );
 }

@@ -52,17 +52,17 @@ static void draw_clock( void ) {
   
   // startup animation, need to do something about the repeating code
   uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
-  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-  
+  ( (HAND_LAYER_DATA *) layer_get_data( hour_layer ) )->home_rect.size = (GSize) {
+    .w = ( sin_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2,
+    .h = ( -cos_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2
+  };
   uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
-  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
-  min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-
+  ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->home_rect.size = (GSize) {
+    .w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2,
+    .h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2
+  };
   start_animation( 0, 2000, true );
-  
+
   show_time_apptimer = app_timer_register( 20 * 1000, show_time_timeout_proc, 0 );
   accel_tap_service_subscribe( start_timer );
 }
@@ -74,18 +74,19 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   #endif
 
   uint32_t hour_angle = ( TRIG_MAX_ANGLE * ( ( ( tm_time.tm_hour % 12 ) * 6 ) + ( tm_time.tm_min / 10 ) ) ) / ( 12 * 6 );
-  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  hour_hand_layer_data->home_rect.size.w = ( sin_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  hour_hand_layer_data->home_rect.size.h = ( -cos_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-  
+  ( (HAND_LAYER_DATA *) layer_get_data( hour_layer ) )->home_rect.size = (GSize) {
+    .w = ( sin_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2,
+    .h = ( -cos_lookup( hour_angle ) * hour_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2
+  };
   uint32_t min_angle = TRIG_MAX_ANGLE * tm_time.tm_min / 60;
-  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
-  min_hand_layer_data->home_rect.size.w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2;
-  min_hand_layer_data->home_rect.size.h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2;
-  
+  ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->home_rect.size = (GSize) {
+    .w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2,
+    .h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2
+  };
+
   if ( show_time ) {
-    hour_hand_layer_data->current_rect = hour_hand_layer_data->home_rect;
-    min_hand_layer_data->current_rect = min_hand_layer_data->home_rect;
+    ( (HAND_LAYER_DATA *) layer_get_data( hour_layer ) )->current_rect = ( (HAND_LAYER_DATA *) layer_get_data( hour_layer ) )->home_rect;
+    ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->current_rect = ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->home_rect;
     layer_mark_dirty( window_layer );
   } else {
     randomize_clockface();    
@@ -144,7 +145,7 @@ static void start_timer( AccelAxisType axis, int32_t direction ) {
   }
 }
 
-static void prv_unobstructed_change( AnimationProgress progress, void *layer ) {
+static void unobstructed_change_proc( AnimationProgress progress, void *layer ) {
   GRect full_bounds = layer_get_bounds( layer );
   GRect unobstructed_bounds = layer_get_unobstructed_bounds( layer );
   
@@ -193,44 +194,38 @@ void clock_init( Window *window ) {
                                            layer_uo_bounds.size.h/2 - DIGIT_RECT_SIZE_W/2,
                                            DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );
     digit_layer[i] = layer_create_with_data( digit_layer_frame_current_rect, sizeof( DIGIT_LAYER_DATA ) );
-    digit_layer_data = ( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] );
-    digit_layer_data->digit = i + 1;
-    digit_layer_data->colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF );
-    /* if ( ( digit_layer_data->digit > 1 ) && ( digit_layer_data->digit < 5 ) ) {
-      digit_layer_data->text_alignment = GTextAlignmentRight;
-    } else if ( ( digit_layer_data->digit > 7 ) && ( digit_layer_data->digit < 11 ) ) {
-      digit_layer_data->text_alignment = GTextAlignmentLeft;
-    } else {
-      digit_layer_data->text_alignment = GTextAlignmentCenter;
-    } */
-    digit_layer_data->text_alignment = GTextAlignmentCenter;
-    digit_layer_data->home_rect = digit_layer_frame_home_rect;
-    digit_layer_data->current_rect = digit_layer_frame_current_rect;
+    *( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) = (DIGIT_LAYER_DATA) {
+      .digit = i + 1,
+      .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF ),
+      .text_alignment = GTextAlignmentCenter,
+      .home_rect = digit_layer_frame_home_rect,
+      .current_rect = digit_layer_frame_current_rect
+    };
     layer_set_update_proc( digit_layer[i], digit_layer_update_proc );
     layer_add_child( bitmap_layer_get_layer( clockface_layer ), digit_layer[i] );
   }
   
-  HAND_LAYER_DATA *hand_layer_data = 0;
-  
   hour_layer = layer_create_with_data( window_bounds, sizeof( HAND_LAYER_DATA ) );
-  hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer ); 
-  hand_layer_data->colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF );
-  hand_layer_data->stroke_width = HOUR_HAND_THK;
-  hand_layer_data->hole_radius = 2;
-  hand_layer_data->layer_frame = window_bounds;
-  hand_layer_data->home_rect = HOUR_RECT;
-  hand_layer_data->current_rect = HOUR_RECT;
+  *( HAND_LAYER_DATA *) layer_get_data( hour_layer ) = (HAND_LAYER_DATA) { 
+    .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF ),
+    .stroke_width = HOUR_HAND_THK,
+    .hole_radius = 2,
+    .layer_frame = window_bounds,
+    .home_rect = HOUR_RECT,
+    .current_rect = HOUR_RECT
+  };
   layer_set_update_proc( hour_layer, hand_layer_update_proc );
   layer_add_child( bitmap_layer_get_layer( clockface_layer ), hour_layer );
 
   min_layer = layer_create_with_data( window_bounds, sizeof( HAND_LAYER_DATA ) );
-  hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
-  hand_layer_data->colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF );
-  hand_layer_data->stroke_width = MIN_HAND_THK;
-  hand_layer_data->hole_radius = 1;
-  hand_layer_data->layer_frame = window_bounds;
-  hand_layer_data->home_rect = MIN_RECT;
-  hand_layer_data->current_rect = MIN_RECT;
+  *( HAND_LAYER_DATA *) layer_get_data( min_layer ) = (HAND_LAYER_DATA) {
+    .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF ),
+    .stroke_width = MIN_HAND_THK,
+    .hole_radius = 1,
+    .layer_frame = window_bounds,
+    .home_rect = MIN_RECT,
+    .current_rect = MIN_RECT,
+  };
   layer_set_update_proc( min_layer, hand_layer_update_proc );
   layer_add_child( bitmap_layer_get_layer( clockface_layer ), min_layer );
   
@@ -242,7 +237,7 @@ void clock_init( Window *window ) {
   
   draw_clock();
   
-  unobstructed_area_service_subscribe( (UnobstructedAreaHandlers) { .change = prv_unobstructed_change }, bitmap_layer_get_layer( clockface_layer ) );
+  unobstructed_area_service_subscribe( (UnobstructedAreaHandlers) { .change = unobstructed_change_proc }, window_layer );
 }
 
 void clock_deinit( void ) {

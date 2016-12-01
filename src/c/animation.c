@@ -38,6 +38,12 @@ static void start_second_animation( void *data ) {
   start_animation( 200, 1000, false );
 }
 
+static void random_wait_timer( void *data ) {
+  vibes_enqueue_custom_pattern( single_vibe_pattern );
+  layer_set_hidden( bitmap_layer_get_layer( oops_layer ), false );
+  app_timer_register( 500, start_second_animation, 0 );
+}
+
 static void digit_grect_setter( void *subject, GRect rect ) {
   ( (DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect = rect;
   log_rect( "setter:", rect );
@@ -52,9 +58,7 @@ static GRect digit_grect_getter( void *subject ) {
 static void digit_animation_implementation_teardown( Animation *animation ) {
   if ( second_animation ) {
     second_animation = false;
-    vibes_enqueue_custom_pattern( single_vibe_pattern );
-    layer_set_hidden( bitmap_layer_get_layer( oops_layer ), false );
-    app_timer_register( 500, start_second_animation, 0 );
+    app_timer_register( ( rand() % 4 + 2 ) * 1000, random_wait_timer, 0 );
   }
 }
 

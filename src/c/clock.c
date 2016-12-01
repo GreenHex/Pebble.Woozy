@@ -139,9 +139,9 @@ static void start_timer( AccelAxisType axis, int32_t direction ) {
   start_animation( 0, 1000, false ); // tick timer service unsubscribed here
 
   if ( show_time_apptimer ) {
-    app_timer_reschedule( show_time_apptimer, SHOW_TIME_HOWTIMER_TIMEOUT );
+    app_timer_reschedule( show_time_apptimer, SHOW_TIME_TIMER_TIMEOUT );
   } else {
-    show_time_apptimer = app_timer_register( SHOW_TIME_HOWTIMER_TIMEOUT, show_time_timeout_proc, 0 );
+    show_time_apptimer = app_timer_register( SHOW_TIME_TIMER_TIMEOUT, show_time_timeout_proc, 0 );
   }
 }
 
@@ -185,7 +185,7 @@ void clock_init( Window *window ) {
   GRect layer_uo_bounds = layer_get_unobstructed_bounds( bitmap_layer_get_layer( clockface_layer ) );
   GRect digit_layer_frame_home_rect;
   GRect digit_layer_frame_current_rect;
-  DIGIT_LAYER_DATA *digit_layer_data = 0;
+  // DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i ++ ) {
     digit_layer_frame_home_rect = GRect( DIGIT_LOCATIONS.points[ rand_digit_order[i] ].x,
                                         DIGIT_LOCATIONS.points[ rand_digit_order[i] ].y,

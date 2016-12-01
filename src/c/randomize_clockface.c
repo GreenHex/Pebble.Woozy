@@ -53,7 +53,6 @@ void randomize_clockface( void ) {
     .h = get_next_random_value( hour_hand_layer_data->current_rect.size.h, 
                                0, display_height, mod_val / 2 )
   };
-  
   HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
   min_hand_layer_data->current_rect.origin = (GPoint) {
     .x = get_next_random_value( min_hand_layer_data->current_rect.origin.x, 

@@ -5,7 +5,7 @@
 //
 
 #include <pebble.h>
-#include "swap.h"
+#include "random.h"
 
 static void swap( int *a, int *b ) {
     int temp = *a;

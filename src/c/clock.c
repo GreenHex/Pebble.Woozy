@@ -10,7 +10,7 @@
 #include "clock.h"
 #include "animation.h"
 #include "randomize_clockface.h"
-#include "swap.h"
+#include "random.h"
 
 #if defined( PBL_COLOR )
 #define NUM_PBL_64_COLOURS 64

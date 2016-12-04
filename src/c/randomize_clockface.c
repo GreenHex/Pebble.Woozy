@@ -26,7 +26,7 @@ void randomize_clockface( void ) {
   int16_t display_width = layer_uo_bounds.size.w;
   int16_t display_height = layer_uo_bounds.size.h;
   
-  srand ( time( NULL ) % rand() );
+  srand ( time( NULL ) );
   
   int mod_val = 10;
   

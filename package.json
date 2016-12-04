@@ -21,6 +21,89 @@
         "resources": {
             "media": [
                 {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/GloriaHallelujah.ttf",
+                    "name": "FONT_GLORIA_HALLELUJAH_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/LeckerliOne-Regular.ttf",
+                    "name": "FONT_LECKERLIONE_REGULAR_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/Aladin-Regular.ttf",
+                    "name": "FONT_ALADIN_REGULAR_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/PermanentMarker.ttf",
+                    "name": "FONT_PERMANENTMARKER_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/PatrickHand-Regular.ttf",
+                    "name": "FONT_PATRICKHAND_REGULAR_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/Sunshiney.ttf",
+                    "name": "FONT_SUNSHINEY_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/Gabriela-Regular.ttf",
+                    "name": "FONT_GABRIELA_REGULAR_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
                     "file": "images/Oops.png",
                     "name": "IMAGE_ICON_OOPS",
                     "targetPlatforms": [
@@ -66,5 +149,5 @@
             "watchface": true
         }
     },
-    "version": "1.10.0"
+    "version": "1.11.0"
 }

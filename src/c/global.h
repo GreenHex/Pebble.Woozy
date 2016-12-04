@@ -13,8 +13,8 @@
 #if PBL_DISPLAY_WIDTH == 200
 
 #else
-#define DIGIT_RECT_SIZE_W 24
-#define DIGIT_RECT_SIZE_H 23
+#define DIGIT_RECT_SIZE_W 20
+#define DIGIT_RECT_SIZE_H 22
 #define DIGIT_X_POS 42
 #define DIGIT_Y_POS 38
 #endif /* PBL_DISPLAY_WIDTH */

@@ -1,6 +1,9 @@
 //
 // Copyright (c) 2016 Vinodh Kumar M. <GreenHex@gmail.com>
 //
+// Fonts:
+// https://fonts.google.com/specimen/Gloria+Hallelujah
+//
 
 #include <pebble.h>
 #include "global.h"
@@ -93,6 +96,9 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   }
 }
 
+#define ALTERNATE_FONT
+#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_GLORIA_HALLELUJAH_22
+
 static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
   // graphics_context_set_fill_color( ctx, GColorLightGray );
@@ -101,8 +107,16 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
   snprintf( digit_str, sizeof( digit_str ), "%u",  ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
+  
+  #ifdef ALTERNATE_FONT
+  GFont font = fonts_load_custom_font( resource_get_handle( DIGIT_ALTERNATE_FONT ) );
+  graphics_draw_text( ctx, digit_str, font, layer_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  fonts_unload_custom_font( font );
+  #else
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  #endif
 }
 
 static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {

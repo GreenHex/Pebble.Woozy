@@ -48,7 +48,7 @@ void randomize_clockface( void ) {
       .y = get_next_random_value( hour_hand_layer_data->current_rect.origin.y, 
                                  0, display_height, mod_val / 2 )
     },
-      .size  = (GSize) {
+    .size  = (GSize) {
       .w = get_next_random_value( hour_hand_layer_data->current_rect.size.w, 
                                  0, display_width, mod_val / 2 ),
       .h = get_next_random_value( hour_hand_layer_data->current_rect.size.h, 
@@ -63,7 +63,7 @@ void randomize_clockface( void ) {
       .y = get_next_random_value( min_hand_layer_data->current_rect.origin.y, 
                                  0, display_height, mod_val / 2 )
     },  
-      .size = (GSize) {
+    .size = (GSize) {
       .w = get_next_random_value( min_hand_layer_data->current_rect.size.w, 
                                  0, display_width, mod_val / 2 ),
       .h = get_next_random_value( min_hand_layer_data->current_rect.size.h, 

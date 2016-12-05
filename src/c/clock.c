@@ -157,9 +157,9 @@ static void start_timer( AccelAxisType axis, int32_t direction ) {
   start_animation( 0, 1000, false ); // tick timer service unsubscribed here
 
   if ( show_time_apptimer ) {
-    app_timer_reschedule( show_time_apptimer, SHOW_TIME_TIMER_TIMEOUT );
+    app_timer_reschedule( show_time_apptimer, SHOW_TIME_TIMER_TIMEOUT_MS );
   } else {
-    show_time_apptimer = app_timer_register( SHOW_TIME_TIMER_TIMEOUT, show_time_timeout_proc, 0 );
+    show_time_apptimer = app_timer_register( SHOW_TIME_TIMER_TIMEOUT_MS, show_time_timeout_proc, 0 );
   }
 }
 

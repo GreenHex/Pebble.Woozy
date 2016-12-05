@@ -21,13 +21,39 @@
         "resources": {
             "media": [
                 {
+                    "file": "fonts/GloriaHallelujah-Emery.ttf",
+                    "name": "FONT_GLORIA_HALLELUJAH_32",
+                    "targetPlatforms": [
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
                     "characterRegex": "[0-9]",
-                    "file": "fonts/GloriaHallelujah.ttf",
+                    "file": "fonts/GloriaHallelujah-Basalt.ttf",
                     "name": "FONT_GLORIA_HALLELUJAH_22",
                     "targetPlatforms": [
                         "aplite",
                         "basalt",
-                        "diorite",
+                        "diorite"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[0-9]",
+                    "file": "fonts/Gabriela-Regular-Basalt.ttf",
+                    "name": "FONT_GABRIELA_REGULAR_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/Gabriela-Regular-Emery.ttf",
+                    "name": "FONT_GABRIELA_REGULAR_32",
+                    "targetPlatforms": [
                         "emery"
                     ],
                     "type": "font"
@@ -92,18 +118,6 @@
                     "type": "font"
                 },
                 {
-                    "characterRegex": "[0-9]",
-                    "file": "fonts/Gabriela-Regular.ttf",
-                    "name": "FONT_GABRIELA_REGULAR_22",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt",
-                        "diorite",
-                        "emery"
-                    ],
-                    "type": "font"
-                },
-                {
                     "file": "images/Oops.png",
                     "name": "IMAGE_ICON_OOPS",
                     "targetPlatforms": [
@@ -142,12 +156,13 @@
         "targetPlatforms": [
             "aplite",
             "basalt",
-            "diorite"
+            "diorite",
+            "emery"
         ],
         "uuid": "03c18386-c7e0-4e8c-99cb-1a468bae8d6c",
         "watchapp": {
             "watchface": true
         }
     },
-    "version": "1.11.0"
+    "version": "1.12.0"
 }

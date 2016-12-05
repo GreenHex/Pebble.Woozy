@@ -97,7 +97,11 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
 }
 
 #define ALTERNATE_FONT
+#if PBL_DISPLAY_WIDTH == 200
+#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_GLORIA_HALLELUJAH_32
+#else
 #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_GLORIA_HALLELUJAH_22
+#endif
 
 static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );

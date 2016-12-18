@@ -59,6 +59,28 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define HOUR_RECT ( GRect( PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2, PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2 - HOUR_HAND_LENGTH ) )
 #define MIN_RECT ( GRect( PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2, PBL_DISPLAY_WIDTH/2, PBL_DISPLAY_HEIGHT/2 - MIN_HAND_LENGTH ) )
 
+#if PBL_DISPLAY_WIDTH == 200
+#define DAY_RECT_POS_X 32
+#define DAY_RECT_POS_Y 132
+#else
+#define DAY_RECT_POS_X 28
+#define DAY_RECT_POS_Y 105
+#endif
+#define DAY_RECT_SIZE_W ( DIGIT_RECT_SIZE_W * 3 )
+#define DAY_RECT_SIZE_H DIGIT_RECT_SIZE_H
+#define DAY_RECT ( GRect( DAY_RECT_POS_X, DAY_RECT_POS_Y, DAY_RECT_SIZE_W, DAY_RECT_SIZE_H ) )
+
+#if PBL_DISPLAY_WIDTH == 200
+#define DATE_RECT_POS_X 90
+#define DATE_RECT_POS_Y DAY_RECT_POS_Y
+#else
+#define DATE_RECT_POS_X 64
+#define DATE_RECT_POS_Y DAY_RECT_POS_Y
+#endif
+#define DATE_RECT_SIZE_W ( DIGIT_RECT_SIZE_W * 3 )
+#define DATE_RECT_SIZE_H DIGIT_RECT_SIZE_H
+#define DATE_RECT ( GRect( DATE_RECT_POS_X, DATE_RECT_POS_Y, DATE_RECT_SIZE_W, DATE_RECT_SIZE_H ) )
+
 #define ICON_OOPS_SIZE_X 64
 #define ICON_OOPS_SIZE_Y 64
 #define ICON_OOPS_LOC_X ( PBL_DISPLAY_WIDTH/2 - ICON_OOPS_SIZE_X/2 )
@@ -90,6 +112,8 @@ BitmapLayer *clockface_layer;
 Layer *digit_layer[ NUM_DIGITS ];
 Layer *hour_layer;
 Layer *min_layer;
+Layer *day_layer;
+Layer *date_layer;
 BitmapLayer *oops_layer;
 GBitmap *oops_bitmap;
 tm tm_time;

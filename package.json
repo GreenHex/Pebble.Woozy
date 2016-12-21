@@ -8,15 +8,7 @@
     "pebble": {
         "displayName": "Kiddie",
         "enableMultiJS": true,
-        "messageKeys": [
-            "ANALOG_SECONDS_DISPLAY_TIMEOUT_SECS",
-            "CHIME_INTERVAL",
-            "CHIME_START_TIME",
-            "CHIME_END_TIME",
-            "CHIME_ON_DAYS[7]",
-            "CHIME_OFFSET",
-            "SHOW_BATTERY_GAUGE"
-        ],
+        "messageKeys": [],
         "projectType": "native",
         "resources": {
             "media": [
@@ -85,5 +77,5 @@
             "watchface": true
         }
     },
-    "version": "1.13.0"
+    "version": "1.14.0"
 }

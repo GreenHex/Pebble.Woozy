@@ -1,37 +1,19 @@
 {
     "author": "The Resetter",
-    "dependencies": {
-        "pebble-clay": "^1.0.2"
-    },
+    "dependencies": {},
     "keywords": [],
     "name": "kiddie",
     "pebble": {
         "displayName": "Kiddie",
         "enableMultiJS": true,
+        "messageKeys": [],
         "projectType": "native",
         "resources": {
             "media": [
                 {
-                    "file": "fonts/GloriaHallelujah-Emery.ttf",
-                    "name": "FONT_GLORIA_HALLELUJAH_32",
-                    "targetPlatforms": [
-                        "emery"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "file": "fonts/GloriaHallelujah-Basalt.ttf",
-                    "name": "FONT_GLORIA_HALLELUJAH_22",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt",
-                        "diorite"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "file": "images/Oops.png",
-                    "name": "IMAGE_ICON_OOPS",
+                    "file": "images/Woozy Icon.png",
+                    "menuIcon": true,
+                    "name": "WOOZY_ICON",
                     "targetPlatforms": [
                         "aplite",
                         "basalt",
@@ -41,9 +23,8 @@
                     "type": "bitmap"
                 },
                 {
-                    "file": "images/Woozy Icon.png",
-                    "menuIcon": true,
-                    "name": "WOOZY_ICON",
+                    "file": "images/Oops.png",
+                    "name": "IMAGE_ICON_OOPS",
                     "targetPlatforms": [
                         "aplite",
                         "basalt",
@@ -61,6 +42,24 @@
                         "diorite"
                     ],
                     "type": "bitmap"
+                },
+                {
+                    "file": "fonts/GloriaHallelujah-Emery.ttf",
+                    "name": "FONT_GLORIA_HALLELUJAH_32",
+                    "targetPlatforms": [
+                        "emery"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "file": "fonts/GloriaHallelujah-Basalt.ttf",
+                    "name": "FONT_GLORIA_HALLELUJAH_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite"
+                    ],
+                    "type": "font"
                 }
             ]
         },

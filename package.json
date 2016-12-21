@@ -8,7 +8,6 @@
     "pebble": {
         "displayName": "Kiddie",
         "enableMultiJS": true,
-        "messageKeys": [],
         "projectType": "native",
         "resources": {
             "media": [

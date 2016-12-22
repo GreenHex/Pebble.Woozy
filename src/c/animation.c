@@ -49,7 +49,7 @@ static void random_wait_timer( void *data ) {
 static void digit_grect_setter( void *subject, GRect rect ) {
   ( (DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect = rect;
   log_rect( "setter:", rect );
-  layer_set_frame( (Layer *) subject, ( ( DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect );
+  layer_set_frame( (Layer *) subject, ( (DIGIT_LAYER_DATA *) layer_get_data( (Layer *) subject ) )->current_rect );
   layer_mark_dirty( (Layer *) subject );
 }
 
@@ -98,7 +98,7 @@ void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) 
   second_animation = do_second_animation;
   
   Animation **digit_animation_array = 0;
-  digit_animation_array = (Animation**) malloc( ( NUM_ANIMATIONS ) * sizeof( Animation* ) );
+  digit_animation_array = (Animation **) malloc( ( NUM_ANIMATIONS ) * sizeof( Animation* ) );
 
   static PropertyAnimation *digit_prop_animation[NUM_DIGITS] = { 0 };
   static PropertyAnimation *day_layer_prop_animation = 0;
@@ -150,7 +150,7 @@ void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) 
   animation_set_duration( digit_animation, duration_ms );
   digit_animation_array[ NUM_DIGITS + 1 ] = digit_animation;
 
-  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
+  HAND_LAYER_DATA *hour_hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( hour_layer );
   hour_hand_prop_animation = property_animation_create( &hand_animation_implementation,
                                                        (void *) &( hour_hand_layer_data->current_rect ), NULL, NULL );
   property_animation_from( hour_hand_prop_animation, &( hour_hand_layer_data->current_rect ),
@@ -163,7 +163,7 @@ void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) 
   animation_set_duration( hour_hand_animation, duration_ms );
   digit_animation_array[ NUM_DIGITS + 2 ] = hour_hand_animation;
 
-  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
+  HAND_LAYER_DATA *min_hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( min_layer );
   min_hand_prop_animation = property_animation_create( &hand_animation_implementation,
                                                       (void *) &( min_hand_layer_data->current_rect ), NULL, NULL );
   property_animation_from( min_hand_prop_animation, &( min_hand_layer_data->current_rect ),

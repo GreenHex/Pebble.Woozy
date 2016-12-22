@@ -113,13 +113,13 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   // graphics_fill_rect( ctx, layer_bounds, 0, GCornerNone );
   
   graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
-  snprintf( digit_str, sizeof( digit_str ), "%u",  ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
+  snprintf( digit_str, sizeof( digit_str ), "%u",  ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
   #ifdef ALTERNATE_FONT
   GFont font = fonts_load_custom_font( resource_get_handle( DIGIT_ALTERNATE_FONT ) );
   graphics_draw_text( ctx, digit_str, font, layer_bounds,
-                     GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   fonts_unload_custom_font( font );
   #else
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
@@ -141,7 +141,7 @@ static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
   fonts_unload_custom_font( font );
   #else
   graphics_draw_text( ctx, day_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
-                     GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
 }
 
@@ -155,11 +155,11 @@ static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   #ifdef ALTERNATE_FONT
   GFont font = fonts_load_custom_font( resource_get_handle( DIGIT_ALTERNATE_FONT ) );
   graphics_draw_text( ctx, date_str, font, layer_bounds,
-                     GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   fonts_unload_custom_font( font );
   #else
   graphics_draw_text( ctx, date_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
-                     GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
 }
 
@@ -225,12 +225,12 @@ static void unobstructed_change_proc( AnimationProgress progress, void *layer ) 
   layer_set_frame( date_layer, ( (DIGIT_LAYER_DATA *) layer_get_data( date_layer ) )->current_rect );
   
   HAND_LAYER_DATA *hand_layer_data = 0; 
-  hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
+  hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( hour_layer );
   hand_layer_data->current_rect.origin.y = ( hand_layer_data->home_rect.origin.y * unobstructed_height ) / full_height;
   hand_layer_data->current_rect.size.h = ( hand_layer_data->home_rect.size.h * unobstructed_height ) / full_height; 
   hour_hand_length = ( HOUR_HAND_LENGTH * unobstructed_height ) / full_height; 
   
-  hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
+  hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( min_layer );
   hand_layer_data->current_rect.origin.y = ( hand_layer_data->home_rect.origin.y * unobstructed_height ) / full_height; 
   hand_layer_data->current_rect.size.h = ( hand_layer_data->home_rect.size.h * unobstructed_height ) / full_height;
   min_hand_length = ( MIN_HAND_LENGTH * unobstructed_height ) / full_height;
@@ -261,7 +261,7 @@ void clock_init( Window *window ) {
                                            layer_uo_bounds.size.h/2 - DIGIT_RECT_SIZE_W/2,
                                            DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );
     digit_layer[i] = layer_create_with_data( digit_layer_frame_current_rect, sizeof( DIGIT_LAYER_DATA ) );
-    *( DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) = (DIGIT_LAYER_DATA) {
+    *(DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) = (DIGIT_LAYER_DATA) {
       .digit = i + 1,
       .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF ),
       .text_alignment = GTextAlignmentCenter,
@@ -277,7 +277,7 @@ void clock_init( Window *window ) {
                                              layer_uo_bounds.size.h/2 - DAY_RECT.size.h/2,
                                              DAY_RECT.size.w, DAY_RECT.size.h );
   day_layer = layer_create_with_data( day_layer_frame_current_rect, sizeof( DIGIT_LAYER_DATA ) );
-  *( DIGIT_LAYER_DATA *) layer_get_data( day_layer ) = (DIGIT_LAYER_DATA) {
+  *(DIGIT_LAYER_DATA *) layer_get_data( day_layer ) = (DIGIT_LAYER_DATA) {
     .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF ),
     .text_alignment = GTextAlignmentCenter,
     .home_rect = day_layer_frame_home_rect,
@@ -291,7 +291,7 @@ void clock_init( Window *window ) {
                                               layer_uo_bounds.size.h/2 - DATE_RECT.size.h/2,
                                               DATE_RECT.size.w, DATE_RECT.size.h );
   date_layer = layer_create_with_data( date_layer_frame_current_rect, sizeof( DIGIT_LAYER_DATA ) );
-  *( DIGIT_LAYER_DATA *) layer_get_data( date_layer ) = (DIGIT_LAYER_DATA) {
+  *(DIGIT_LAYER_DATA *) layer_get_data( date_layer ) = (DIGIT_LAYER_DATA) {
     .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF ),
     .text_alignment = GTextAlignmentCenter,
     .home_rect = date_layer_frame_home_rect,
@@ -301,7 +301,7 @@ void clock_init( Window *window ) {
   layer_add_child( bitmap_layer_get_layer( clockface_layer ), date_layer );
 
   hour_layer = layer_create_with_data( window_bounds, sizeof( HAND_LAYER_DATA ) );
-  *( HAND_LAYER_DATA *) layer_get_data( hour_layer ) = (HAND_LAYER_DATA) { 
+  *(HAND_LAYER_DATA *) layer_get_data( hour_layer ) = (HAND_LAYER_DATA) { 
     .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF ),
     .stroke_width = HOUR_HAND_THK,
     .hole_radius = 2,
@@ -313,7 +313,7 @@ void clock_init( Window *window ) {
   layer_add_child( bitmap_layer_get_layer( clockface_layer ), hour_layer );
 
   min_layer = layer_create_with_data( window_bounds, sizeof( HAND_LAYER_DATA ) );
-  *( HAND_LAYER_DATA *) layer_get_data( min_layer ) = (HAND_LAYER_DATA) {
+  *(HAND_LAYER_DATA *) layer_get_data( min_layer ) = (HAND_LAYER_DATA) {
     .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0xFFFFFF ),
     .stroke_width = MIN_HAND_THK,
     .hole_radius = 1,

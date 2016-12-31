@@ -37,7 +37,7 @@ static void start_second_animation( void *data ) {
     ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
                                                                                  DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );;
   }
-  start_animation( 200, 1000, false );
+  start_animation( 200, 1000, AnimationCurveEaseInOut, false );
 }
 
 static void random_wait_timer( void *data ) {
@@ -93,7 +93,7 @@ static const PropertyAnimationImplementation hand_animation_implementation = {
   },
 };
 
-void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) {
+void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, bool do_second_animation ) {
   tick_timer_service_unsubscribe();
   second_animation = do_second_animation;
   
@@ -132,7 +132,7 @@ void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) 
   property_animation_to( day_layer_prop_animation, (void *) &( day_layer_data->home_rect ),
                         sizeof( day_layer_data->home_rect ), true );
   digit_animation = property_animation_get_animation( day_layer_prop_animation );
-  animation_set_curve( digit_animation, AnimationCurveLinear );
+  animation_set_curve( digit_animation, anim_curve );
   animation_set_delay( digit_animation, delay_ms );
   animation_set_duration( digit_animation, duration_ms );
   digit_animation_array[ NUM_DIGITS ] = digit_animation;
@@ -145,7 +145,7 @@ void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) 
   property_animation_to( date_layer_prop_animation, (void *) &( date_layer_data->home_rect ),
                         sizeof( date_layer_data->home_rect ), true );
   digit_animation = property_animation_get_animation( date_layer_prop_animation );
-  animation_set_curve( digit_animation, AnimationCurveLinear );
+  animation_set_curve( digit_animation, anim_curve );
   animation_set_delay( digit_animation, delay_ms );
   animation_set_duration( digit_animation, duration_ms );
   digit_animation_array[ NUM_DIGITS + 1 ] = digit_animation;
@@ -158,7 +158,7 @@ void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) 
   property_animation_to( hour_hand_prop_animation, &( hour_hand_layer_data->home_rect ),
                         sizeof( hour_hand_layer_data->home_rect ), true );
   Animation *hour_hand_animation = property_animation_get_animation( hour_hand_prop_animation );
-  animation_set_curve( hour_hand_animation, AnimationCurveLinear );
+  animation_set_curve( hour_hand_animation, anim_curve );
   animation_set_delay( hour_hand_animation, delay_ms );
   animation_set_duration( hour_hand_animation, duration_ms );
   digit_animation_array[ NUM_DIGITS + 2 ] = hour_hand_animation;
@@ -171,7 +171,7 @@ void start_animation( int delay_ms, int duration_ms, bool do_second_animation ) 
   property_animation_to( min_hand_prop_animation, &( min_hand_layer_data->home_rect ),
                         sizeof( min_hand_layer_data->home_rect ), true );
   Animation *min_hand_animation = property_animation_get_animation( min_hand_prop_animation );
-  animation_set_curve( min_hand_animation, AnimationCurveLinear );
+  animation_set_curve( min_hand_animation, anim_curve );
   animation_set_delay( min_hand_animation, delay_ms );
   animation_set_duration( min_hand_animation, duration_ms );
   digit_animation_array[ NUM_DIGITS + 3 ] = min_hand_animation;

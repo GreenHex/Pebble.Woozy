@@ -6,4 +6,4 @@
 #include <pebble.h>
 #include "global.h"
 
-void start_animation( int delay_ms, int duration_ms, bool do_second_animation );
+void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, bool do_second_animation );

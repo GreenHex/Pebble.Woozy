@@ -63,7 +63,7 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define DAY_RECT_POS_X 36
 #define DAY_RECT_POS_Y 132
 #else
-#define DAY_RECT_POS_X 28
+#define DAY_RECT_POS_X 30
 #define DAY_RECT_POS_Y 105
 #endif
 #define DAY_RECT_SIZE_W ( DIGIT_RECT_SIZE_W * 3 )
@@ -74,7 +74,7 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define DATE_RECT_POS_X 90
 #define DATE_RECT_POS_Y DAY_RECT_POS_Y
 #else
-#define DATE_RECT_POS_X 64
+#define DATE_RECT_POS_X 68
 #define DATE_RECT_POS_Y DAY_RECT_POS_Y
 #endif
 #define DATE_RECT_SIZE_W ( DIGIT_RECT_SIZE_W * 2 )

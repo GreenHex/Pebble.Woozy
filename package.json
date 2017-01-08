@@ -11,6 +11,12 @@
         "resources": {
             "media": [
                 {
+                    "file": "fonts/Aladin-Regular.ttf",
+                    "name": "FONT_ALADIN_REGULAR_22",
+                    "targetPlatforms": null,
+                    "type": "font"
+                },
+                {
                     "file": "images/Woozy Icon.png",
                     "menuIcon": true,
                     "name": "WOOZY_ICON",
@@ -75,5 +81,5 @@
             "watchface": true
         }
     },
-    "version": "1.15.0"
+    "version": "1.16.0"
 }

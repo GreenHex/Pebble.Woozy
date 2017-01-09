@@ -113,17 +113,38 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
   // graphics_context_set_fill_color( ctx, GColorLightGray );
   // graphics_fill_rect( ctx, layer_bounds, 0, GCornerNone );
-  
-  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
+
   snprintf( digit_str, sizeof( digit_str ), "%u",  ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
   #ifdef ALTERNATE_FONT
   GFont font = fonts_load_custom_font( resource_get_handle( DIGIT_ALTERNATE_FONT ) );
+  #if defined(PBL_COLOR)
+  GRect shift_bounds = layer_bounds;
+  graphics_context_set_text_color( ctx, GColorBlack );
+  shift_bounds.origin.x -= 1;
+  shift_bounds.origin.y -= 0;
+  graphics_draw_text( ctx, digit_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x += 1;
+  shift_bounds.origin.y -= 1;
+  graphics_draw_text( ctx, digit_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x += 1;
+  shift_bounds.origin.y += 1;
+  graphics_draw_text( ctx, digit_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x -= 1;
+  shift_bounds.origin.y += 1;
+  graphics_draw_text( ctx, digit_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  #endif
+  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorBlack ) );
   graphics_draw_text( ctx, digit_str, font, layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   fonts_unload_custom_font( font );
   #else
+  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorBlack ) );
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
@@ -131,17 +152,37 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
 
 static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
-  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
-  
   strftime( day_str, sizeof( day_str ), "%a", &tm_time );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
   #ifdef ALTERNATE_FONT
   GFont font = fonts_load_custom_font( resource_get_handle( DIGIT_ALTERNATE_FONT ) );
+  #if defined(PBL_COLOR)
+  GRect shift_bounds = layer_bounds;
+  graphics_context_set_text_color( ctx, GColorBlack );
+  shift_bounds.origin.x -= 1;
+  shift_bounds.origin.y -= 0;
+  graphics_draw_text( ctx, day_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x += 1;
+  shift_bounds.origin.y -= 1;
+  graphics_draw_text( ctx, day_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x += 1;
+  shift_bounds.origin.y += 1;
+  graphics_draw_text( ctx, day_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x -= 1;
+  shift_bounds.origin.y += 1;
+  graphics_draw_text( ctx, day_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  #endif
+  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
   graphics_draw_text( ctx, day_str, font, layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   fonts_unload_custom_font( font );
   #else
+  graphics_context_set_text_color( ctx, GColorBlack );
   graphics_draw_text( ctx, day_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
@@ -149,17 +190,38 @@ static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
 
 static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
-  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
   
   strftime( date_str, sizeof( date_str ), "%e", &tm_time );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
   #ifdef ALTERNATE_FONT
   GFont font = fonts_load_custom_font( resource_get_handle( DIGIT_ALTERNATE_FONT ) );
+    #if defined(PBL_COLOR)
+  GRect shift_bounds = layer_bounds;
+  graphics_context_set_text_color( ctx, GColorBlack );
+  shift_bounds.origin.x -= 1;
+  shift_bounds.origin.y -= 0;
+  graphics_draw_text( ctx, date_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x += 1;
+  shift_bounds.origin.y -= 1;
+  graphics_draw_text( ctx, date_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x += 1;
+  shift_bounds.origin.y += 1;
+  graphics_draw_text( ctx, date_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  shift_bounds.origin.x -= 1;
+  shift_bounds.origin.y += 1;
+  graphics_draw_text( ctx, date_str, font, shift_bounds,
+                     GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
+  #endif
+  graphics_context_set_text_color( ctx, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
   graphics_draw_text( ctx, date_str, font, layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   fonts_unload_custom_font( font );
   #else
+  graphics_context_set_text_color( ctx, GColorBlack ) );
   graphics_draw_text( ctx, date_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
@@ -249,7 +311,7 @@ void clock_init( Window *window ) {
   clockface_bitmap = gbitmap_create_with_resource( RESOURCE_ID_IMAGE_CLOCKFACE );
   bitmap_layer_set_bitmap( clockface_layer, clockface_bitmap );
   #else
-  window_set_background_color( window, GColorBlack );
+  window_set_background_color( window, GColorWhite );
   #endif
   GRect layer_uo_bounds = layer_get_unobstructed_bounds( bitmap_layer_get_layer( clockface_layer ) );
   GRect digit_layer_frame_home_rect;

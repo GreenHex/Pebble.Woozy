@@ -190,6 +190,7 @@ static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
 static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
   
+  // tm_time.tm_mday = 28; 
   strftime( date_str, sizeof( date_str ), "%e", &tm_time );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   

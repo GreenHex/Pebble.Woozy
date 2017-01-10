@@ -16,7 +16,7 @@
 #define NUM_PBL_64_COLOURS 64
 
 const uint32_t PBL_64_COLOURS[ NUM_PBL_64_COLOURS ] = {
-  0x000000, 0xFFFFFF, 0xAAAAAA, 0x555555, 0xFFFFAA, 0xFFFF55, 0xFFAA55, 0xFF5500,
+  0x000000, 0xFFFFFF, 0xAAAAAA, 0x005555, 0xFFFFAA, 0xFFFF55, 0xFFAA55, 0xFF5500,
   0xFF0000, 0xFF0055, 0xFF5555, 0xFFAAAA, 0xFFFF00, 0xFFAA00, 0xAA5500, 0xAA5555,
   0xAA0000, 0xFF00AA, 0xFF55AA, 0xFFAAFF, 0x550000, 0xAA0055, 0xFF00FF, 0xFF55FF,
   0x550055, 0xAA00AA, 0xAA55AA, 0x000055, 0x5500AA, 0xAA00FF, 0xAA55FF, 0x0000AA,
@@ -100,7 +100,7 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   }
 }
 
-void make_outline( GContext *ctx, Layer *layer, GColor fgColour ) {
+void make_outline( GContext *ctx, Layer *layer, GColor fgColour, GColor outlineColor ) {
   #if defined( PBL_COLOR )
   GRect frame = layer_get_frame( layer );
   GBitmap *fb = graphics_capture_frame_buffer( ctx );
@@ -120,18 +120,16 @@ void make_outline( GContext *ctx, Layer *layer, GColor fgColour ) {
       GColor c0r2 = (GColor) { .argb = r2.data[ frame.origin.x + x - 1 ] };
       GColor c1r2 = (GColor) { .argb = r2.data[ frame.origin.x + x ] };
       GColor c2r2 = (GColor) { .argb = r2.data[ frame.origin.x + x + 1 ] };
-      GColor color = GColorBlack; 
-      
+     
       if ( gcolor_equal( c1r1, GColorWhite ) ) {
         if ( gcolor_equal( c0r0, fgColour ) || gcolor_equal( c1r0, fgColour ) || gcolor_equal( c2r0, fgColour ) ||
             gcolor_equal( c0r1, fgColour ) || gcolor_equal( c2r1, fgColour ) ||
             gcolor_equal( c0r2, fgColour ) || gcolor_equal( c1r2, fgColour ) || gcolor_equal( c2r2, fgColour ) ) {
-          memset( &r1.data[ frame.origin.x + x ], color.argb, 1 );
+          memset( &r1.data[ frame.origin.x + x ], outlineColor.argb, 1 );
         }
       }
     } 
   }
-  
   graphics_release_frame_buffer( ctx, fb );
   #endif
 }
@@ -165,7 +163,7 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
-  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorBlack ) );
+  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorBlack ), GColorDarkGray );
 }
 
 static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
@@ -184,7 +182,7 @@ static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_draw_text( ctx, day_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
-  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
+  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ), GColorDarkGray );
 }
 
 static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
@@ -205,7 +203,7 @@ static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_draw_text( ctx, date_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
-  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ) );
+  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ), GColorDarkGray );
 }
 
 static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {

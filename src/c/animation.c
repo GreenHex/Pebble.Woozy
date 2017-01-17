@@ -9,6 +9,7 @@
 // #define DEBUG
 
 extern BitmapLayer *clockface_layer;
+extern Layer *snooze_layer;
 extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
@@ -16,7 +17,7 @@ extern Layer *day_layer;
 extern Layer *date_layer;
 extern BitmapLayer *oops_layer;
 
-#define NUM_ANIMATIONS ( NUM_DIGITS + 4 )
+#define NUM_ANIMATIONS ( NUM_DIGITS + 5 )
 
 static bool second_animation = true;
 
@@ -101,6 +102,7 @@ void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, 
   digit_animation_array = (Animation **) malloc( ( NUM_ANIMATIONS ) * sizeof( Animation* ) );
 
   static PropertyAnimation *digit_prop_animation[NUM_DIGITS] = { 0 };
+  static PropertyAnimation *snooze_layer_prop_animation = 0; 
   static PropertyAnimation *day_layer_prop_animation = 0;
   static PropertyAnimation *date_layer_prop_animation = 0;
   static PropertyAnimation *hour_hand_prop_animation = 0;
@@ -123,6 +125,19 @@ void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, 
     animation_set_duration( digit_animation, duration_ms );
     digit_animation_array[i] = digit_animation;
   }
+ 
+  DIGIT_LAYER_DATA *snooze_layer_data = (DIGIT_LAYER_DATA *) layer_get_data( snooze_layer );
+  snooze_layer_prop_animation = property_animation_create( &digit_animation_implementation, NULL, NULL, NULL );
+  property_animation_subject( snooze_layer_prop_animation, (void *) &snooze_layer, true );
+  property_animation_from( snooze_layer_prop_animation, (void *) &( snooze_layer_data->current_rect ),
+                          sizeof( snooze_layer_data->current_rect ), true );
+  property_animation_to( snooze_layer_prop_animation, (void *) &( snooze_layer_data->home_rect ),
+                        sizeof( snooze_layer_data->home_rect ), true );
+  digit_animation = property_animation_get_animation( snooze_layer_prop_animation );
+  animation_set_curve( digit_animation, anim_curve );
+  animation_set_delay( digit_animation, delay_ms );
+  animation_set_duration( digit_animation, duration_ms );
+  digit_animation_array[ NUM_DIGITS ] = digit_animation;
   
   DIGIT_LAYER_DATA *day_layer_data = (DIGIT_LAYER_DATA *) layer_get_data( day_layer );
   day_layer_prop_animation = property_animation_create( &digit_animation_implementation, NULL, NULL, NULL );
@@ -135,7 +150,7 @@ void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, 
   animation_set_curve( digit_animation, anim_curve );
   animation_set_delay( digit_animation, delay_ms );
   animation_set_duration( digit_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS ] = digit_animation;
+  digit_animation_array[ NUM_DIGITS + 1] = digit_animation;
   
   DIGIT_LAYER_DATA *date_layer_data = (DIGIT_LAYER_DATA *) layer_get_data( date_layer );
   date_layer_prop_animation = property_animation_create( &digit_animation_implementation, NULL, NULL, NULL );
@@ -148,7 +163,7 @@ void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, 
   animation_set_curve( digit_animation, anim_curve );
   animation_set_delay( digit_animation, delay_ms );
   animation_set_duration( digit_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS + 1 ] = digit_animation;
+  digit_animation_array[ NUM_DIGITS + 2 ] = digit_animation;
 
   HAND_LAYER_DATA *hour_hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( hour_layer );
   hour_hand_prop_animation = property_animation_create( &hand_animation_implementation,
@@ -161,7 +176,7 @@ void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, 
   animation_set_curve( hour_hand_animation, anim_curve );
   animation_set_delay( hour_hand_animation, delay_ms );
   animation_set_duration( hour_hand_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS + 2 ] = hour_hand_animation;
+  digit_animation_array[ NUM_DIGITS + 3 ] = hour_hand_animation;
 
   HAND_LAYER_DATA *min_hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( min_layer );
   min_hand_prop_animation = property_animation_create( &hand_animation_implementation,
@@ -174,7 +189,7 @@ void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, 
   animation_set_curve( min_hand_animation, anim_curve );
   animation_set_delay( min_hand_animation, delay_ms );
   animation_set_duration( min_hand_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS + 3 ] = min_hand_animation;
+  digit_animation_array[ NUM_DIGITS + 4 ] = min_hand_animation;
   
   Animation *spawn = 0;
   spawn = animation_spawn_create_from_array( digit_animation_array, NUM_ANIMATIONS );

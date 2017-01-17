@@ -28,6 +28,7 @@ const uint32_t PBL_64_COLOURS[ NUM_PBL_64_COLOURS ] = {
 #endif /* PBL_COLOR */
 
 extern BitmapLayer *clockface_layer;
+extern Layer *snooze_layer;
 extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
@@ -106,6 +107,16 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
     
   } else {
     randomize_clockface();    
+  }
+}
+
+static void snooze_layer_update_proc( Layer *layer, GContext *ctx ) {
+  if ( quiet_time_is_active() ) {
+    GRect bounds = layer_get_bounds( layer );
+    graphics_context_set_compositing_mode( ctx, GCompOpSet );
+    GBitmap *snooze_bitmap = gbitmap_create_with_resource( RESOURCE_ID_IMAGE_MOUSE );
+    graphics_draw_bitmap_in_rect( ctx, snooze_bitmap, bounds );
+    gbitmap_destroy( snooze_bitmap );
   }
 }
 
@@ -262,6 +273,10 @@ static void unobstructed_change_proc( AnimationProgress progress, void *layer ) 
   int16_t full_height = full_bounds.size.h;
   int16_t unobstructed_height = unobstructed_bounds.size.h; /* - PBL_IF_COLOR_ELSE( 2, 2 ); */
   
+  DIGIT_LAYER_DATA *snooze_layer_data = layer_get_data( snooze_layer );
+  snooze_layer_data->current_rect.origin.y = ( (uint32_t) snooze_layer_data->home_rect.origin.y * unobstructed_height ) / full_height;
+  layer_set_frame( snooze_layer, ( (DIGIT_LAYER_DATA *) layer_get_data( snooze_layer ) )->current_rect );
+  
   DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
     digit_layer_data = layer_get_data( digit_layer[i] );
@@ -302,6 +317,18 @@ void clock_init( Window *window ) {
   window_set_background_color( window, GColorWhite );
   #endif
   GRect layer_uo_bounds = layer_get_unobstructed_bounds( bitmap_layer_get_layer( clockface_layer ) );
+  
+  snooze_layer = layer_create_with_data( GRect( layer_uo_bounds.size.w/2 - 20/2, layer_uo_bounds.size.h/2 - 20/2, 20, 20 ),
+                                        sizeof( DIGIT_LAYER_DATA ) );
+  *(DIGIT_LAYER_DATA *) layer_get_data( snooze_layer ) = (DIGIT_LAYER_DATA) {
+    .home_rect = SNOOZE_LAYER_FRAME,
+    .current_rect = GRect( layer_uo_bounds.size.w/2 - 20/2,
+                          layer_uo_bounds.size.h/2 - 20/2,
+                          20, 20 )
+  };
+  layer_set_update_proc( snooze_layer, snooze_layer_update_proc );
+  layer_add_child( bitmap_layer_get_layer( clockface_layer ), snooze_layer );
+  
   GRect digit_layer_frame_home_rect;
   GRect digit_layer_frame_current_rect;
   // DIGIT_LAYER_DATA *digit_layer_data = 0;
@@ -402,6 +429,7 @@ void clock_deinit( void ) {
   for ( int i = 0; i < NUM_DIGITS; i ++ ) {
     if ( digit_layer[i] ) layer_destroy( digit_layer[i] );
   }
+  if ( snooze_layer ) layer_destroy( snooze_layer );
   if ( clockface_layer ) bitmap_layer_destroy( clockface_layer );
   if ( clockface_bitmap ) gbitmap_destroy( clockface_bitmap );
 }

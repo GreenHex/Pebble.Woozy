@@ -7,6 +7,7 @@
 #include "randomize_clockface.h"
 
 extern BitmapLayer *clockface_layer;
+extern Layer *snooze_layer;
 extern Layer *digit_layer[];
 extern Layer *hour_layer;
 extern Layer *min_layer;
@@ -32,6 +33,13 @@ void randomize_clockface( void ) {
   srand ( time( NULL ) );
   
   int mod_val = 10;
+  
+  current_rect = ( (DIGIT_LAYER_DATA *) layer_get_data( snooze_layer ) )->current_rect;
+  current_rect.origin = (GPoint) {
+    .x = get_next_random_value( current_rect.origin.x, 0, display_width - current_rect.size.w, mod_val ),
+    .y = get_next_random_value( current_rect.origin.y, 0, display_height - current_rect.size.h, mod_val )
+  };
+  layer_set_frame( snooze_layer, current_rect );
   
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
     current_rect = ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->current_rect; // layer_get_frame( digit_layer[i] );

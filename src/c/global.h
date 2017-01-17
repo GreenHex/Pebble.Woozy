@@ -82,6 +82,8 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define DATE_RECT_SIZE_H DIGIT_RECT_SIZE_H
 #define DATE_RECT ( GRect( DATE_RECT_POS_X, DATE_RECT_POS_Y, DATE_RECT_SIZE_W, DATE_RECT_SIZE_H ) )
 
+#define SNOOZE_LAYER_FRAME ( GRect( PBL_DISPLAY_WIDTH / 2 - 20 / 2, 36, 20, 20 ) )
+
 #define ICON_OOPS_SIZE_X 64
 #define ICON_OOPS_SIZE_Y 64
 #define ICON_OOPS_LOC_X ( PBL_DISPLAY_WIDTH/2 - ICON_OOPS_SIZE_X/2 )
@@ -110,6 +112,7 @@ typedef struct {
 #define NUM_DIGITS 12
 
 BitmapLayer *clockface_layer;
+Layer *snooze_layer;
 Layer *digit_layer[ NUM_DIGITS ];
 Layer *hour_layer;
 Layer *min_layer;

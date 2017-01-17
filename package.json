@@ -4,12 +4,23 @@
     "keywords": [],
     "name": "kiddie",
     "pebble": {
-        "displayName": "Kiddie",
+        "displayName": "Kiddie v1.20",
         "enableMultiJS": true,
         "messageKeys": [],
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "file": "images/Mouse.png",
+                    "name": "IMAGE_MOUSE",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "bitmap"
+                },
                 {
                     "file": "fonts/Aladin-Regular.ttf",
                     "name": "FONT_ALADIN_REGULAR_22",
@@ -81,5 +92,5 @@
             "watchface": true
         }
     },
-    "version": "1.19.0"
+    "version": "1.20.0"
 }

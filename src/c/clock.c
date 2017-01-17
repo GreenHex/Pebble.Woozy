@@ -53,6 +53,12 @@ static void show_time_timeout_proc( void* data );
 static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed );
 static void start_timer( AccelAxisType axis, int32_t direction );
 
+static uint32_t const two_segments[] = { 200, 200, 200 };
+VibePattern double_vibe_pattern = {
+  .durations = two_segments,
+  .num_segments = ARRAY_LENGTH( two_segments ),
+};
+
 static void draw_clock( void ) {
   time_t now = time( NULL );
   tm_time = *localtime( &now ); // copy to global
@@ -95,6 +101,9 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
     ( (HAND_LAYER_DATA *) layer_get_data( hour_layer ) )->current_rect = ( (HAND_LAYER_DATA *) layer_get_data( hour_layer ) )->home_rect;
     ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->current_rect = ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->home_rect;
     layer_mark_dirty( window_layer );
+    
+    if ( ( units_changed & HOUR_UNIT ) && ( !quiet_time_is_active() ) ) vibes_enqueue_custom_pattern( double_vibe_pattern );
+    
   } else {
     randomize_clockface();    
   }

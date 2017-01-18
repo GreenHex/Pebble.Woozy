@@ -4,7 +4,7 @@
     "keywords": [],
     "name": "kiddie",
     "pebble": {
-        "displayName": "Kiddie v1.20",
+        "displayName": "Kiddie v1.21",
         "enableMultiJS": true,
         "messageKeys": [],
         "projectType": "native",
@@ -92,5 +92,5 @@
             "watchface": true
         }
     },
-    "version": "1.20.0"
+    "version": "1.21.0"
 }

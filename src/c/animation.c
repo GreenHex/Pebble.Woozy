@@ -94,6 +94,40 @@ static const PropertyAnimationImplementation hand_animation_implementation = {
   },
 };
 
+static Animation *animate_layer( Layer *layer, const PropertyAnimationImplementation *prop_animation_implementation, 
+                                int delay_ms, int duration_ms, AnimationCurve anim_curve ) {
+  PropertyAnimation *layer_prop_animation = property_animation_create( prop_animation_implementation, NULL, NULL, NULL );
+  property_animation_subject( layer_prop_animation, (void *) &layer, true );
+  DIGIT_LAYER_DATA *layer_data = (DIGIT_LAYER_DATA *) layer_get_data( layer );
+  property_animation_from( layer_prop_animation, (void *) &( layer_data->current_rect ),
+                          sizeof( layer_data->current_rect ), true );
+  property_animation_to( layer_prop_animation, (void *) &( layer_data->home_rect ),
+                        sizeof( layer_data->home_rect ), true );
+  Animation *digit_animation = property_animation_get_animation( layer_prop_animation );
+  animation_set_curve( digit_animation, anim_curve );
+  animation_set_delay( digit_animation, delay_ms );
+  animation_set_duration( digit_animation, duration_ms );
+  return ( digit_animation );
+}
+
+static Animation *animate_hand( Layer *layer, const PropertyAnimationImplementation *hand_animation_implementation, 
+                               int delay_ms, int duration_ms, AnimationCurve anim_curve ) {
+  PropertyAnimation *hand_prop_animation = property_animation_create( hand_animation_implementation, NULL, NULL, NULL );
+  property_animation_subject( hand_prop_animation, (void *) &layer, true );
+  HAND_LAYER_DATA *hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( layer );
+  hand_prop_animation = property_animation_create( hand_animation_implementation,
+                                                  (void *) &( hand_layer_data->current_rect ), NULL, NULL );
+  property_animation_from( hand_prop_animation, &( hand_layer_data->current_rect ),
+                          sizeof( hand_layer_data->current_rect ), true );
+  property_animation_to( hand_prop_animation, &( hand_layer_data->home_rect ),
+                        sizeof( hand_layer_data->home_rect ), true );
+  Animation *hand_animation = property_animation_get_animation( hand_prop_animation );
+  animation_set_curve( hand_animation, anim_curve );
+  animation_set_delay( hand_animation, delay_ms );
+  animation_set_duration( hand_animation, duration_ms );
+  return ( hand_animation );
+}
+
 void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, bool do_second_animation ) {
   tick_timer_service_unsubscribe();
   second_animation = do_second_animation;
@@ -101,95 +135,15 @@ void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, 
   Animation **digit_animation_array = 0;
   digit_animation_array = (Animation **) malloc( ( NUM_ANIMATIONS ) * sizeof( Animation* ) );
 
-  static PropertyAnimation *digit_prop_animation[NUM_DIGITS] = { 0 };
-  static PropertyAnimation *snooze_layer_prop_animation = 0; 
-  static PropertyAnimation *day_layer_prop_animation = 0;
-  static PropertyAnimation *date_layer_prop_animation = 0;
-  static PropertyAnimation *hour_hand_prop_animation = 0;
-  static PropertyAnimation *min_hand_prop_animation = 0;
-  
-  Animation *digit_animation = 0;
-  DIGIT_LAYER_DATA *digit_layer_data = 0;
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
-    digit_layer_data = (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] );
-    digit_prop_animation[i] = property_animation_create( &digit_animation_implementation, NULL, NULL, NULL );
-    property_animation_subject( digit_prop_animation[i], (void *) &(digit_layer[i]), true );
-    property_animation_from( digit_prop_animation[i], (void *) &( digit_layer_data->current_rect ),
-                            sizeof( digit_layer_data->current_rect ), true );
-    property_animation_to( digit_prop_animation[i], (void *) &( digit_layer_data->home_rect ),
-                          sizeof( digit_layer_data->home_rect ), true ); 
-    
-    digit_animation = property_animation_get_animation( digit_prop_animation[i] );
-    animation_set_curve( digit_animation, AnimationCurveLinear );
-    animation_set_delay( digit_animation, delay_ms );
-    animation_set_duration( digit_animation, duration_ms );
-    digit_animation_array[i] = digit_animation;
+    digit_animation_array[ i ] = animate_layer( digit_layer[ i ], &digit_animation_implementation, delay_ms, duration_ms, anim_curve );;
   }
- 
-  DIGIT_LAYER_DATA *snooze_layer_data = (DIGIT_LAYER_DATA *) layer_get_data( snooze_layer );
-  snooze_layer_prop_animation = property_animation_create( &digit_animation_implementation, NULL, NULL, NULL );
-  property_animation_subject( snooze_layer_prop_animation, (void *) &snooze_layer, true );
-  property_animation_from( snooze_layer_prop_animation, (void *) &( snooze_layer_data->current_rect ),
-                          sizeof( snooze_layer_data->current_rect ), true );
-  property_animation_to( snooze_layer_prop_animation, (void *) &( snooze_layer_data->home_rect ),
-                        sizeof( snooze_layer_data->home_rect ), true );
-  digit_animation = property_animation_get_animation( snooze_layer_prop_animation );
-  animation_set_curve( digit_animation, anim_curve );
-  animation_set_delay( digit_animation, delay_ms );
-  animation_set_duration( digit_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS ] = digit_animation;
   
-  DIGIT_LAYER_DATA *day_layer_data = (DIGIT_LAYER_DATA *) layer_get_data( day_layer );
-  day_layer_prop_animation = property_animation_create( &digit_animation_implementation, NULL, NULL, NULL );
-  property_animation_subject( day_layer_prop_animation, (void *) &day_layer, true );
-  property_animation_from( day_layer_prop_animation, (void *) &( day_layer_data->current_rect ),
-                          sizeof( day_layer_data->current_rect ), true );
-  property_animation_to( day_layer_prop_animation, (void *) &( day_layer_data->home_rect ),
-                        sizeof( day_layer_data->home_rect ), true );
-  digit_animation = property_animation_get_animation( day_layer_prop_animation );
-  animation_set_curve( digit_animation, anim_curve );
-  animation_set_delay( digit_animation, delay_ms );
-  animation_set_duration( digit_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS + 1] = digit_animation;
-  
-  DIGIT_LAYER_DATA *date_layer_data = (DIGIT_LAYER_DATA *) layer_get_data( date_layer );
-  date_layer_prop_animation = property_animation_create( &digit_animation_implementation, NULL, NULL, NULL );
-  property_animation_subject( date_layer_prop_animation, (void *) &date_layer, true );
-  property_animation_from( date_layer_prop_animation, (void *) &( date_layer_data->current_rect ),
-                          sizeof( date_layer_data->current_rect ), true );
-  property_animation_to( date_layer_prop_animation, (void *) &( date_layer_data->home_rect ),
-                        sizeof( date_layer_data->home_rect ), true );
-  digit_animation = property_animation_get_animation( date_layer_prop_animation );
-  animation_set_curve( digit_animation, anim_curve );
-  animation_set_delay( digit_animation, delay_ms );
-  animation_set_duration( digit_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS + 2 ] = digit_animation;
-
-  HAND_LAYER_DATA *hour_hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  hour_hand_prop_animation = property_animation_create( &hand_animation_implementation,
-                                                       (void *) &( hour_hand_layer_data->current_rect ), NULL, NULL );
-  property_animation_from( hour_hand_prop_animation, &( hour_hand_layer_data->current_rect ),
-                          sizeof( hour_hand_layer_data->current_rect ), true );
-  property_animation_to( hour_hand_prop_animation, &( hour_hand_layer_data->home_rect ),
-                        sizeof( hour_hand_layer_data->home_rect ), true );
-  Animation *hour_hand_animation = property_animation_get_animation( hour_hand_prop_animation );
-  animation_set_curve( hour_hand_animation, anim_curve );
-  animation_set_delay( hour_hand_animation, delay_ms );
-  animation_set_duration( hour_hand_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS + 3 ] = hour_hand_animation;
-
-  HAND_LAYER_DATA *min_hand_layer_data = (HAND_LAYER_DATA *) layer_get_data( min_layer );
-  min_hand_prop_animation = property_animation_create( &hand_animation_implementation,
-                                                      (void *) &( min_hand_layer_data->current_rect ), NULL, NULL );
-  property_animation_from( min_hand_prop_animation, &( min_hand_layer_data->current_rect ),
-                          sizeof( min_hand_layer_data->current_rect ), true );
-  property_animation_to( min_hand_prop_animation, &( min_hand_layer_data->home_rect ),
-                        sizeof( min_hand_layer_data->home_rect ), true );
-  Animation *min_hand_animation = property_animation_get_animation( min_hand_prop_animation );
-  animation_set_curve( min_hand_animation, anim_curve );
-  animation_set_delay( min_hand_animation, delay_ms );
-  animation_set_duration( min_hand_animation, duration_ms );
-  digit_animation_array[ NUM_DIGITS + 4 ] = min_hand_animation;
+  digit_animation_array[ NUM_DIGITS ] = animate_layer( snooze_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS + 1 ] = animate_layer( date_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS + 2 ] = animate_layer( day_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS + 3 ] = animate_hand( hour_layer, &hand_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS + 4 ] = animate_hand( min_layer, &hand_animation_implementation, delay_ms, duration_ms, anim_curve );
   
   Animation *spawn = 0;
   spawn = animation_spawn_create_from_array( digit_animation_array, NUM_ANIMATIONS );

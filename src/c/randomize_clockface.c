@@ -24,6 +24,33 @@ static int16_t get_next_random_value( int16_t x, int16_t min_val, int16_t max_va
   return tmp_val;
 }
 
+static void layer_set_random_origin( Layer *layer, int16_t display_width, int16_t display_height, int mod_val ) {
+  GRect *current_rect = &( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->current_rect );
+  current_rect->origin = (GPoint) {
+    .x = get_next_random_value( current_rect->origin.x, 0, display_width - current_rect->size.w, mod_val ),
+    .y = get_next_random_value( current_rect->origin.y, 0, display_height - current_rect->size.h, mod_val )
+  };
+  layer_set_frame( layer, *current_rect );
+}
+
+static void layer_set_random_rect( Layer *layer, int16_t display_width, int16_t display_height, int mod_val ) {
+  HAND_LAYER_DATA *hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( layer );
+  hand_layer_data->current_rect = (GRect) {
+    .origin = (GPoint) {
+      .x = get_next_random_value( hand_layer_data->current_rect.origin.x, 
+                                 0, display_width, mod_val / 2 ),
+      .y = get_next_random_value( hand_layer_data->current_rect.origin.y, 
+                                 0, display_height, mod_val / 2 )
+    },
+    .size  = (GSize) {
+      .w = get_next_random_value( hand_layer_data->current_rect.size.w, 
+                                 0, display_width, mod_val / 2 ),
+      .h = get_next_random_value( hand_layer_data->current_rect.size.h, 
+                                 0, display_height, mod_val / 2 )
+    }
+  };
+}
+
 void randomize_clockface( void ) {
   GRect layer_uo_bounds = layer_get_unobstructed_bounds( bitmap_layer_get_layer( clockface_layer ) );
   GRect current_rect;
@@ -34,66 +61,14 @@ void randomize_clockface( void ) {
   
   int mod_val = 10;
   
-  current_rect = ( (DIGIT_LAYER_DATA *) layer_get_data( snooze_layer ) )->current_rect;
-  current_rect.origin = (GPoint) {
-    .x = get_next_random_value( current_rect.origin.x, 0, display_width - current_rect.size.w, mod_val ),
-    .y = get_next_random_value( current_rect.origin.y, 0, display_height - current_rect.size.h, mod_val )
-  };
-  layer_set_frame( snooze_layer, current_rect );
+  layer_set_random_origin( snooze_layer, display_width, display_height, mod_val );
   
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
-    current_rect = ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->current_rect; // layer_get_frame( digit_layer[i] );
-    current_rect.origin = (GPoint) {
-      .x = get_next_random_value( current_rect.origin.x, 0, display_width - current_rect.size.w, mod_val ),
-      .y = get_next_random_value( current_rect.origin.y, 0, display_height - current_rect.size.h, mod_val )
-    };
-    ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->current_rect = current_rect;
-    layer_set_frame( digit_layer[i], current_rect );
+    layer_set_random_origin( digit_layer[i], display_width, display_height, mod_val );
   }
+  layer_set_random_origin( day_layer, display_width, display_height, mod_val );
+  layer_set_random_origin( date_layer, display_width, display_height, mod_val );
   
-  current_rect = ( (DIGIT_LAYER_DATA *) layer_get_data( day_layer ) )->current_rect;
-  current_rect.origin = (GPoint) {
-    .x = get_next_random_value( current_rect.origin.x, 0, display_width - current_rect.size.w, mod_val ),
-    .y = get_next_random_value( current_rect.origin.y, 0, display_height - current_rect.size.h, mod_val )
-  };
-  layer_set_frame( day_layer, current_rect );
-  
-  current_rect = ( (DIGIT_LAYER_DATA *) layer_get_data( date_layer ) )->current_rect;
-  current_rect.origin = (GPoint) {
-    .x = get_next_random_value( current_rect.origin.x, 0, display_width - current_rect.size.w, mod_val ),
-    .y = get_next_random_value( current_rect.origin.y, 0, display_height - current_rect.size.h, mod_val )
-  };
-  layer_set_frame( date_layer, current_rect );
-  
-  HAND_LAYER_DATA *hour_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( hour_layer );
-  hour_hand_layer_data->current_rect = (GRect) {
-    .origin = (GPoint) {
-      .x = get_next_random_value( hour_hand_layer_data->current_rect.origin.x, 
-                                 0, display_width, mod_val / 2 ),
-      .y = get_next_random_value( hour_hand_layer_data->current_rect.origin.y, 
-                                 0, display_height, mod_val / 2 )
-    },
-    .size  = (GSize) {
-      .w = get_next_random_value( hour_hand_layer_data->current_rect.size.w, 
-                                 0, display_width, mod_val / 2 ),
-      .h = get_next_random_value( hour_hand_layer_data->current_rect.size.h, 
-                                 0, display_height, mod_val / 2 )
-    }
-  };
-  
-  HAND_LAYER_DATA *min_hand_layer_data = ( HAND_LAYER_DATA *) layer_get_data( min_layer );
-  min_hand_layer_data->current_rect = (GRect) {
-    .origin = (GPoint) {
-      .x = get_next_random_value( min_hand_layer_data->current_rect.origin.x, 
-                                 0, display_width, mod_val / 2 ),
-      .y = get_next_random_value( min_hand_layer_data->current_rect.origin.y, 
-                                 0, display_height, mod_val / 2 )
-    },  
-    .size = (GSize) {
-      .w = get_next_random_value( min_hand_layer_data->current_rect.size.w, 
-                                 0, display_width, mod_val / 2 ),
-      .h = get_next_random_value( min_hand_layer_data->current_rect.size.h, 
-                                 0, display_height, mod_val / 2 )
-    }
-  };
+  layer_set_random_rect( hour_layer, display_width, display_height, mod_val );
+  layer_set_random_rect( min_layer, display_width, display_height, mod_val );
 }

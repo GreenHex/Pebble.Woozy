@@ -53,12 +53,9 @@ static void layer_set_random_rect( Layer *layer, int16_t display_width, int16_t 
 
 void randomize_clockface( void ) {
   GRect layer_uo_bounds = layer_get_unobstructed_bounds( bitmap_layer_get_layer( clockface_layer ) );
-  GRect current_rect;
   int16_t display_width = layer_uo_bounds.size.w;
-  int16_t display_height = layer_uo_bounds.size.h;
-  
+  int16_t display_height = layer_uo_bounds.size.h; 
   srand ( time( NULL ) );
-  
   int mod_val = 10;
   
   layer_set_random_origin( snooze_layer, display_width, display_height, mod_val );

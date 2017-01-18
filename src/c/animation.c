@@ -94,7 +94,7 @@ static const PropertyAnimationImplementation hand_animation_implementation = {
   },
 };
 
-static Animation *animate_layer( Layer *layer, const PropertyAnimationImplementation *prop_animation_implementation, 
+static Animation *animate_layer_origin( Layer *layer, const PropertyAnimationImplementation *prop_animation_implementation, 
                                 int delay_ms, int duration_ms, AnimationCurve anim_curve ) {
   PropertyAnimation *layer_prop_animation = property_animation_create( prop_animation_implementation, NULL, NULL, NULL );
   property_animation_subject( layer_prop_animation, (void *) &layer, true );
@@ -110,7 +110,7 @@ static Animation *animate_layer( Layer *layer, const PropertyAnimationImplementa
   return ( digit_animation );
 }
 
-static Animation *animate_hand( Layer *layer, const PropertyAnimationImplementation *hand_animation_implementation, 
+static Animation *animate_layer_rect( Layer *layer, const PropertyAnimationImplementation *hand_animation_implementation, 
                                int delay_ms, int duration_ms, AnimationCurve anim_curve ) {
   PropertyAnimation *hand_prop_animation = property_animation_create( hand_animation_implementation, NULL, NULL, NULL );
   property_animation_subject( hand_prop_animation, (void *) &layer, true );
@@ -130,20 +130,19 @@ static Animation *animate_hand( Layer *layer, const PropertyAnimationImplementat
 
 void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, bool do_second_animation ) {
   tick_timer_service_unsubscribe();
-  second_animation = do_second_animation;
+  second_animation = do_second_animation; // global
   
   Animation **digit_animation_array = 0;
   digit_animation_array = (Animation **) malloc( ( NUM_ANIMATIONS ) * sizeof( Animation* ) );
 
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
-    digit_animation_array[ i ] = animate_layer( digit_layer[ i ], &digit_animation_implementation, delay_ms, duration_ms, anim_curve );;
+    digit_animation_array[ i ] = animate_layer_origin( digit_layer[ i ], &digit_animation_implementation, delay_ms, duration_ms, anim_curve );;
   }
-  
-  digit_animation_array[ NUM_DIGITS ] = animate_layer( snooze_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
-  digit_animation_array[ NUM_DIGITS + 1 ] = animate_layer( date_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
-  digit_animation_array[ NUM_DIGITS + 2 ] = animate_layer( day_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
-  digit_animation_array[ NUM_DIGITS + 3 ] = animate_hand( hour_layer, &hand_animation_implementation, delay_ms, duration_ms, anim_curve );
-  digit_animation_array[ NUM_DIGITS + 4 ] = animate_hand( min_layer, &hand_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS ] = animate_layer_origin( snooze_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS + 1 ] = animate_layer_origin( date_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS + 2 ] = animate_layer_origin( day_layer, &digit_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS + 3 ] = animate_layer_rect( hour_layer, &hand_animation_implementation, delay_ms, duration_ms, anim_curve );
+  digit_animation_array[ NUM_DIGITS + 4 ] = animate_layer_rect( min_layer, &hand_animation_implementation, delay_ms, duration_ms, anim_curve );
   
   Animation *spawn = 0;
   spawn = animation_spawn_create_from_array( digit_animation_array, NUM_ANIMATIONS );

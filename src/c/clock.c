@@ -103,7 +103,7 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
     ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->current_rect = ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->home_rect;
     layer_mark_dirty( window_layer );    
   } else {
-    randomize_clockface();    
+    randomize_clockface();  
   }
   if ( ( units_changed & HOUR_UNIT ) && ( !quiet_time_is_active() ) ) vibes_enqueue_custom_pattern( double_vibe_pattern );
 }
@@ -118,32 +118,33 @@ static void snooze_layer_update_proc( Layer *layer, GContext *ctx ) {
   }
 }
 
-void make_outline( GContext *ctx, Layer *layer, GColor fgColour, GColor outlineColor ) {
+static void make_outline( GContext *ctx, Layer *layer, GColor fgColour, GColor outlineColor ) {
   #if defined( PBL_COLOR )
   GRect frame = layer_get_frame( layer );
+  GPoint origin = layer_convert_point_to_screen( layer, GPointZero );
   GBitmap *fb = graphics_capture_frame_buffer( ctx );
   
   for( int y = 1; y < frame.size.h - 1; y++ ) {
-    GBitmapDataRowInfo r0 = gbitmap_get_data_row_info( fb, frame.origin.y + y - 1 );
-    GBitmapDataRowInfo r1 = gbitmap_get_data_row_info( fb, frame.origin.y + y );
-    GBitmapDataRowInfo r2 = gbitmap_get_data_row_info( fb, frame.origin.y + y + 1 );
+    GBitmapDataRowInfo r0 = gbitmap_get_data_row_info( fb, origin.y + y - 1 );
+    GBitmapDataRowInfo r1 = gbitmap_get_data_row_info( fb, origin.y + y );
+    GBitmapDataRowInfo r2 = gbitmap_get_data_row_info( fb, origin.y + y + 1 );
     
     for ( int x = 1; x < frame.size.w - 1; x++ ) {
-      GColor c0r0 = (GColor) { .argb = r0.data[ frame.origin.x + x - 1 ] };
-      GColor c1r0 = (GColor) { .argb = r0.data[ frame.origin.x + x ] };
-      GColor c2r0 = (GColor) { .argb = r0.data[ frame.origin.x + x + 1 ] };
-      GColor c0r1 = (GColor) { .argb = r1.data[ frame.origin.x + x - 1 ] };
-      GColor c1r1 = (GColor) { .argb = r1.data[ frame.origin.x + x ] };
-      GColor c2r1 = (GColor) { .argb = r1.data[ frame.origin.x + x + 1 ] };
-      GColor c0r2 = (GColor) { .argb = r2.data[ frame.origin.x + x - 1 ] };
-      GColor c1r2 = (GColor) { .argb = r2.data[ frame.origin.x + x ] };
-      GColor c2r2 = (GColor) { .argb = r2.data[ frame.origin.x + x + 1 ] };
+      GColor c0r0 = (GColor) { .argb = r0.data[ origin.x + x - 1 ] };
+      GColor c1r0 = (GColor) { .argb = r0.data[ origin.x + x ] };
+      GColor c2r0 = (GColor) { .argb = r0.data[ origin.x + x + 1 ] };
+      GColor c0r1 = (GColor) { .argb = r1.data[ origin.x + x - 1 ] };
+      GColor c1r1 = (GColor) { .argb = r1.data[ origin.x + x ] };
+      GColor c2r1 = (GColor) { .argb = r1.data[ origin.x + x + 1 ] };
+      GColor c0r2 = (GColor) { .argb = r2.data[ origin.x + x - 1 ] };
+      GColor c1r2 = (GColor) { .argb = r2.data[ origin.x + x ] };
+      GColor c2r2 = (GColor) { .argb = r2.data[ origin.x + x + 1 ] };
      
       if ( gcolor_equal( c1r1, GColorWhite ) ) {
         if ( gcolor_equal( c0r0, fgColour ) || gcolor_equal( c1r0, fgColour ) || gcolor_equal( c2r0, fgColour ) ||
             gcolor_equal( c0r1, fgColour ) || gcolor_equal( c2r1, fgColour ) ||
             gcolor_equal( c0r2, fgColour ) || gcolor_equal( c1r2, fgColour ) || gcolor_equal( c2r2, fgColour ) ) {
-          memset( &r1.data[ frame.origin.x + x ], outlineColor.argb, 1 );
+          memset( &r1.data[ origin.x + x ], outlineColor.argb, 1 );
         }
       }
     } 

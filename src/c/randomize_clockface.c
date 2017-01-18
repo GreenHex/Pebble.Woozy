@@ -38,15 +38,15 @@ static void layer_set_random_rect( Layer *layer, int16_t display_width, int16_t 
   hand_layer_data->current_rect = (GRect) {
     .origin = (GPoint) {
       .x = get_next_random_value( hand_layer_data->current_rect.origin.x, 
-                                 0, display_width, mod_val / 2 ),
+                                 0, display_width, mod_val ),
       .y = get_next_random_value( hand_layer_data->current_rect.origin.y, 
-                                 0, display_height, mod_val / 2 )
+                                 0, display_height, mod_val )
     },
     .size  = (GSize) {
       .w = get_next_random_value( hand_layer_data->current_rect.size.w, 
-                                 0, display_width, mod_val / 2 ),
+                                 0, display_width, mod_val ),
       .h = get_next_random_value( hand_layer_data->current_rect.size.h, 
-                                 0, display_height, mod_val / 2 )
+                                 0, display_height, mod_val )
     }
   };
 }
@@ -59,13 +59,12 @@ void randomize_clockface( void ) {
   int mod_val = 10;
   
   layer_set_random_origin( snooze_layer, display_width, display_height, mod_val );
-  
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
     layer_set_random_origin( digit_layer[i], display_width, display_height, mod_val );
   }
   layer_set_random_origin( day_layer, display_width, display_height, mod_val );
   layer_set_random_origin( date_layer, display_width, display_height, mod_val );
   
-  layer_set_random_rect( hour_layer, display_width, display_height, mod_val );
-  layer_set_random_rect( min_layer, display_width, display_height, mod_val );
+  layer_set_random_rect( hour_layer, display_width, display_height, mod_val / 2 );
+  layer_set_random_rect( min_layer, display_width, display_height, mod_val / 2 );
 }

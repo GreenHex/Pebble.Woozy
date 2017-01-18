@@ -132,8 +132,7 @@ void start_animation( int delay_ms, int duration_ms, AnimationCurve anim_curve, 
   tick_timer_service_unsubscribe();
   second_animation = do_second_animation; // global
   
-  Animation **digit_animation_array = 0;
-  digit_animation_array = (Animation **) malloc( ( NUM_ANIMATIONS ) * sizeof( Animation* ) );
+  Animation **digit_animation_array = (Animation **) malloc( ( NUM_ANIMATIONS ) * sizeof( Animation* ) );
 
   for ( int i = 0; i < NUM_DIGITS; i++ ) {
     digit_animation_array[ i ] = animate_layer_origin( digit_layer[ i ], &digit_animation_implementation, delay_ms, duration_ms, anim_curve );;

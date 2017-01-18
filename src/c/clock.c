@@ -101,13 +101,11 @@ static void handle_clock_tick( struct tm *tick_time, TimeUnits units_changed ) {
   if ( show_time ) {
     ( (HAND_LAYER_DATA *) layer_get_data( hour_layer ) )->current_rect = ( (HAND_LAYER_DATA *) layer_get_data( hour_layer ) )->home_rect;
     ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->current_rect = ( (HAND_LAYER_DATA *) layer_get_data( min_layer ) )->home_rect;
-    layer_mark_dirty( window_layer );
-    
-    if ( ( units_changed & HOUR_UNIT ) && ( !quiet_time_is_active() ) ) vibes_enqueue_custom_pattern( double_vibe_pattern );
-    
+    layer_mark_dirty( window_layer );    
   } else {
     randomize_clockface();    
   }
+  if ( ( units_changed & HOUR_UNIT ) && ( !quiet_time_is_active() ) ) vibes_enqueue_custom_pattern( double_vibe_pattern );
 }
 
 static void snooze_layer_update_proc( Layer *layer, GContext *ctx ) {

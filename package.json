@@ -84,8 +84,7 @@
         "targetPlatforms": [
             "aplite",
             "basalt",
-            "diorite",
-            "emery"
+            "diorite"
         ],
         "uuid": "03c18386-c7e0-4e8c-99cb-1a468bae8d6c",
         "watchapp": {

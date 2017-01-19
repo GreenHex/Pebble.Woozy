@@ -2,7 +2,7 @@
     "author": "The Resetter",
     "dependencies": {},
     "keywords": [],
-    "name": "kiddie-v1.21",
+    "name": "kiddie-v1.22",
     "pebble": {
         "displayName": "Kiddie ",
         "enableMultiJS": true,
@@ -91,5 +91,5 @@
             "watchface": true
         }
     },
-    "version": "1.21.0"
+    "version": "1.22.0"
 }

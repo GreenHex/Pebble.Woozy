@@ -65,6 +65,6 @@ void randomize_clockface( void ) {
   layer_set_random_origin( day_layer, display_width, display_height, mod_val );
   layer_set_random_origin( date_layer, display_width, display_height, mod_val );
   
-  layer_set_random_rect( hour_layer, display_width, display_height, mod_val / 2 );
-  layer_set_random_rect( min_layer, display_width, display_height, mod_val / 2 );
+  layer_set_random_rect( hour_layer, display_width, display_height, 3 );
+  layer_set_random_rect( min_layer, display_width, display_height, 3 );
 }

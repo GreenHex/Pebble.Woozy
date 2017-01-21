@@ -2,7 +2,7 @@
     "author": "The Resetter",
     "dependencies": {},
     "keywords": [],
-    "name": "kiddie-v1.22",
+    "name": "kiddie-v1.23",
     "pebble": {
         "displayName": "Kiddie ",
         "enableMultiJS": true,
@@ -10,6 +10,18 @@
         "projectType": "native",
         "resources": {
             "media": [
+                {
+                    "characterRegex": "[a-zA-Z0-9]",
+                    "file": "fonts/Itim-Regular.ttf",
+                    "name": "FONT_ITIM_REGULAR_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite",
+                        "emery"
+                    ],
+                    "type": "font"
+                },
                 {
                     "file": "images/Mouse.png",
                     "name": "IMAGE_MOUSE",
@@ -22,6 +34,7 @@
                     "type": "bitmap"
                 },
                 {
+                    "characterRegex": "[a-zA-Z0-9]",
                     "file": "fonts/Aladin-Regular.ttf",
                     "name": "FONT_ALADIN_REGULAR_22",
                     "targetPlatforms": null,
@@ -91,5 +104,5 @@
             "watchface": true
         }
     },
-    "version": "1.22.0"
+    "version": "1.23.0"
 }

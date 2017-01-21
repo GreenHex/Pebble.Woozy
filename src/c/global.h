@@ -37,7 +37,7 @@
 #endif /* PBL_DISPLAY_WIDTH */
 
 #define DIGIT_TOP_BOTTOM_GAP 2
-#define DIGIT_TXT_VERT_ADJ 2
+#define DIGIT_TXT_VERT_ADJ 3
 
 static const GPathInfo DIGIT_LOCATIONS = {
   12, (GPoint []) {
@@ -72,7 +72,7 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define DAY_RECT ( GRect( DAY_RECT_POS_X, DAY_RECT_POS_Y, DAY_RECT_SIZE_W, DAY_RECT_SIZE_H ) )
 
 #if PBL_DISPLAY_WIDTH == 200
-#define DATE_RECT_POS_X 90
+#define DATE_RECT_POS_X 96
 #define DATE_RECT_POS_Y DAY_RECT_POS_Y
 #else
 #define DATE_RECT_POS_X 74

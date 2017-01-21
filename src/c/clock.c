@@ -3,7 +3,7 @@
 //
 // Fonts:
 // https://fonts.google.com/specimen/Gloria+Hallelujah
-//
+// https://fonts.google.com/specimen/Schoolbell
 
 #include <pebble.h>
 #include "global.h"
@@ -155,11 +155,13 @@ static void make_outline( GContext *ctx, Layer *layer, GColor fgColour, GColor o
 
 #define ALTERNATE_FONT
 
+
 #if PBL_DISPLAY_WIDTH == 200
-#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_GLORIA_HALLELUJAH_32
+#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ITIM_REGULAR_22 /* RESOURCE_ID_FONT_GLORIA_HALLELUJAH_32 */
 #else
-#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_GLORIA_HALLELUJAH_22
+#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ITIM_REGULAR_22 /* RESOURCE_ID_FONT_GLORIA_HALLELUJAH_22 */
 #endif
+
 // OR
 // #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ALADIN_REGULAR_22
 

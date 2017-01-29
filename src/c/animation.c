@@ -38,7 +38,11 @@ void start_second_animation( void *data ) {
     ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
                                                                                  DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );;
   }
-  start_animation( 200, 1000, AnimationCurveEaseInOut, false );
+  if ( launch_reason() == APP_LAUNCH_USER ) {
+    start_animation( 200, 1000, AnimationCurveEaseInOut, false );
+  } else {
+    start_animation( 10, 800, AnimationCurveEaseIn, false );
+  }
 }
 
 static void random_wait_timer( void *data ) {

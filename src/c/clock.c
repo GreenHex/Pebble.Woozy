@@ -78,12 +78,11 @@ static void draw_clock( void ) {
     .h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2
   };
   if ( launch_reason() == APP_LAUNCH_USER ) {
-    start_animation( 0, 2000, AnimationCurveEaseInOut, true );
-    show_time_apptimer = app_timer_register( 20 * 1000, show_time_timeout_proc, 0 );
+    start_animation( 0, 2000, AnimationCurveEaseInOut, true ); 
   } else {
     start_second_animation( 0 );
   }
-  
+  show_time_apptimer = app_timer_register( 20 * 1000, show_time_timeout_proc, 0 );
   accel_tap_service_subscribe( start_timer );
 }
 
@@ -278,7 +277,7 @@ static void show_time_timeout_proc( void* data ) {
 static void start_timer( AccelAxisType axis, int32_t direction ) {
   show_time = true;
 
-  start_animation( 0, 1000, AnimationCurveEaseInOut, false ); // tick timer service unsubscribed here
+  start_animation( 0, 800, AnimationCurveEaseInOut, false ); // tick timer service unsubscribed here
 
   if ( show_time_apptimer ) {
     app_timer_reschedule( show_time_apptimer, SHOW_TIME_TIMER_TIMEOUT_MS );

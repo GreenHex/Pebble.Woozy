@@ -2,7 +2,7 @@
     "author": "The Resetter",
     "dependencies": {},
     "keywords": [],
-    "name": "kiddie-v1.23",
+    "name": "kiddie-v1.24",
     "pebble": {
         "displayName": "Kiddie ",
         "enableMultiJS": true,
@@ -12,8 +12,30 @@
             "media": [
                 {
                     "characterRegex": "[a-zA-Z0-9]",
-                    "file": "fonts/Itim-Regular.ttf",
-                    "name": "FONT_ITIM_REGULAR_22",
+                    "file": "fonts/Atma-Light.ttf",
+                    "name": "FONT_ATMA_LIGHT_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[a-zA-Z0-9]",
+                    "file": "fonts/Atma-Regular.ttf",
+                    "name": "FONT_ATMA_REGULAR_22",
+                    "targetPlatforms": [
+                        "aplite",
+                        "basalt",
+                        "diorite"
+                    ],
+                    "type": "font"
+                },
+                {
+                    "characterRegex": "[a-zA-Z0-9]",
+                    "file": "fonts/Julee.ttf",
+                    "name": "FONT_JULEE_22",
                     "targetPlatforms": [
                         "aplite",
                         "basalt",
@@ -104,5 +126,5 @@
             "watchface": true
         }
     },
-    "version": "1.23.0"
+    "version": "1.24.0"
 }

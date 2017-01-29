@@ -25,7 +25,7 @@
 #else
 
 #define DIGIT_RECT_SIZE_W 24
-#define DIGIT_RECT_SIZE_H 22
+#define DIGIT_RECT_SIZE_H 23
 #define DIGIT_X_POS 42
 #define DIGIT_Y_POS 38
 
@@ -64,10 +64,10 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define DAY_RECT_POS_X 36
 #define DAY_RECT_POS_Y 132
 #else
-#define DAY_RECT_POS_X 24
+#define DAY_RECT_POS_X ( 26 + 9 )
 #define DAY_RECT_POS_Y 105
 #endif
-#define DAY_RECT_SIZE_W ( DIGIT_RECT_SIZE_W * 3 )
+#define DAY_RECT_SIZE_W ( DIGIT_RECT_SIZE_W + 16 )
 #define DAY_RECT_SIZE_H DIGIT_RECT_SIZE_H
 #define DAY_RECT ( GRect( DAY_RECT_POS_X, DAY_RECT_POS_Y, DAY_RECT_SIZE_W, DAY_RECT_SIZE_H ) )
 
@@ -75,10 +75,10 @@ static const GPathInfo DIGIT_LOCATIONS = {
 #define DATE_RECT_POS_X 96
 #define DATE_RECT_POS_Y DAY_RECT_POS_Y
 #else
-#define DATE_RECT_POS_X 74
+#define DATE_RECT_POS_X ( 74 + 5 )
 #define DATE_RECT_POS_Y DAY_RECT_POS_Y
 #endif
-#define DATE_RECT_SIZE_W ( DIGIT_RECT_SIZE_W * 2 )
+#define DATE_RECT_SIZE_W ( DIGIT_RECT_SIZE_W + 4 )
 #define DATE_RECT_SIZE_H DIGIT_RECT_SIZE_H
 #define DATE_RECT ( GRect( DATE_RECT_POS_X, DATE_RECT_POS_Y, DATE_RECT_SIZE_W, DATE_RECT_SIZE_H ) )
 

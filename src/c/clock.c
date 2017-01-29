@@ -77,9 +77,13 @@ static void draw_clock( void ) {
     .w = ( sin_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_WIDTH / 2,
     .h = ( -cos_lookup( min_angle ) * min_hand_length / TRIG_MAX_RATIO ) + PBL_DISPLAY_HEIGHT / 2
   };
-  start_animation( 0, 2000, AnimationCurveEaseInOut, true );
-
-  show_time_apptimer = app_timer_register( 20 * 1000, show_time_timeout_proc, 0 );
+  if ( launch_reason() == APP_LAUNCH_USER ) {
+    start_animation( 0, 2000, AnimationCurveEaseInOut, true );
+    show_time_apptimer = app_timer_register( 20 * 1000, show_time_timeout_proc, 0 );
+  } else {
+    start_second_animation( 0 );
+  }
+  
   accel_tap_service_subscribe( start_timer );
 }
 

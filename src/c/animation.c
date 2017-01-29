@@ -33,7 +33,7 @@ static void log_rect( char *str, GRect rect ) {
   #endif
 }
 
-static void start_second_animation( void *data ) { 
+void start_second_animation( void *data ) { 
   for ( int i = 0; i < NUM_DIGITS; i ++ ) { 
     ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
                                                                                  DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );;

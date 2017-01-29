@@ -4,6 +4,8 @@
 // Fonts:
 // https://fonts.google.com/specimen/Gloria+Hallelujah
 // https://fonts.google.com/specimen/Julee
+// https://fonts.google.com/specimen/Megrim
+//
 
 #include <pebble.h>
 #include "global.h"
@@ -165,7 +167,10 @@ static void make_outline( GContext *ctx, Layer *layer, GColor fgColour, GColor o
 // OR
 // #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ALADIN_REGULAR_22
 // #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ATMA_REGULAR_22
-#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ATMA_LIGHT_22
+// #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ATMA_LIGHT_22
+// #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_LIFESAVERS_REGULAR_20
+#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_MEGRIM_22
+// #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_FARSANREGULAR_22
 
 static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
@@ -191,11 +196,11 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
 
 static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
-  //
-  // graphics_context_set_stroke_width( ctx, 1 );
-  // graphics_context_set_stroke_color( ctx, GColorBlack );
-  // graphics_draw_round_rect( ctx, layer_bounds, 0 );
-  //
+  /*
+  graphics_context_set_stroke_width( ctx, 1 );
+  graphics_context_set_stroke_color( ctx, GColorBlack );
+  graphics_draw_round_rect( ctx, layer_bounds, 0 );
+  */
   strftime( day_str, sizeof( day_str ), "%a", &tm_time );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
@@ -215,11 +220,11 @@ static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
 
 static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
-  //
-  // graphics_context_set_stroke_width( ctx, 1 );
-  // graphics_context_set_stroke_color( ctx, GColorBlack );
-  // graphics_draw_round_rect( ctx, layer_bounds, 0 );
-  //  
+  /*
+  graphics_context_set_stroke_width( ctx, 1 );
+  graphics_context_set_stroke_color( ctx, GColorBlack );
+  graphics_draw_round_rect( ctx, layer_bounds, 0 );
+  */  
   // tm_time.tm_mday = 28; 
   strftime( date_str, sizeof( date_str ), "%e", &tm_time );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
@@ -370,7 +375,7 @@ void clock_init( Window *window ) {
   day_layer = layer_create_with_data( day_layer_frame_current_rect, sizeof( DIGIT_LAYER_DATA ) );
   *(DIGIT_LAYER_DATA *) layer_get_data( day_layer ) = (DIGIT_LAYER_DATA) {
     .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0x000000 ),
-    .text_alignment = GTextAlignmentRight,
+    .text_alignment = GTextAlignmentCenter,
     .home_rect = day_layer_frame_home_rect,
     .current_rect = day_layer_frame_current_rect
   };
@@ -384,7 +389,7 @@ void clock_init( Window *window ) {
   date_layer = layer_create_with_data( date_layer_frame_current_rect, sizeof( DIGIT_LAYER_DATA ) );
   *(DIGIT_LAYER_DATA *) layer_get_data( date_layer ) = (DIGIT_LAYER_DATA) {
     .colour = PBL_IF_COLOR_ELSE( PBL_64_COLOURS[ rand() % ( NUM_PBL_64_COLOURS - 3 ) + 3 ], 0x000000 ),
-    .text_alignment = GTextAlignmentLeft,
+    .text_alignment = GTextAlignmentCenter,
     .home_rect = date_layer_frame_home_rect,
     .current_rect = date_layer_frame_current_rect
   };

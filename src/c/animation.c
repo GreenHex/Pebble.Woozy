@@ -34,14 +34,14 @@ static void log_rect( char *str, GRect rect ) {
 }
 
 void start_second_animation( void *data ) { 
-  for ( int i = 0; i < NUM_DIGITS; i ++ ) { 
+  for ( int i = 0; i < NUM_DIGITS; i++ ) { 
     ( (DIGIT_LAYER_DATA *) layer_get_data( digit_layer[i] ) )->home_rect = GRect( DIGIT_LOCATIONS.points[i].x, DIGIT_LOCATIONS.points[i].y,
-                                                                                 DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );;
+                                                                                 DIGIT_RECT_SIZE_W, DIGIT_RECT_SIZE_H );
   }
   if ( launch_reason() == APP_LAUNCH_USER ) {
     start_animation( 200, 1000, AnimationCurveEaseInOut, false );
   } else {
-    start_animation( 10, 800, AnimationCurveEaseIn, false );
+    start_animation( 10, 800, AnimationCurveEaseOut, false );
   }
 }
 

@@ -2,7 +2,7 @@
     "author": "The Resetter",
     "dependencies": {},
     "keywords": [],
-    "name": "kiddie-v1.25",
+    "name": "kiddie-v1.26",
     "pebble": {
         "displayName": "Kiddie ",
         "enableMultiJS": true,
@@ -33,7 +33,7 @@
                     "type": "font"
                 },
                 {
-                    "characterRegex": "[a-zA-Z0-9]",
+                    "characterRegex": "[a-zA-Z0-9 ]",
                     "file": "fonts/Megrim.ttf",
                     "name": "FONT_MEGRIM_22",
                     "targetPlatforms": [
@@ -159,5 +159,5 @@
             "watchface": true
         }
     },
-    "version": "1.25.0"
+    "version": "1.26.0"
 }

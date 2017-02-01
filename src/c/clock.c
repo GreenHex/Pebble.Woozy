@@ -179,7 +179,7 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
   // graphics_context_set_fill_color( ctx, GColorLightGray );
   // graphics_fill_rect( ctx, layer_bounds, 0, GCornerNone );
-
+ 
   snprintf( digit_str, sizeof( digit_str ), "%u",  ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
@@ -204,6 +204,7 @@ static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_context_set_stroke_color( ctx, GColorBlack );
   graphics_draw_round_rect( ctx, layer_bounds, 0 );
   */
+  // tm_time.tm_wday = 4;
   strftime( day_str, sizeof( day_str ), "%a", &tm_time );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
@@ -227,7 +228,7 @@ static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_context_set_stroke_width( ctx, 1 );
   graphics_context_set_stroke_color( ctx, GColorBlack );
   graphics_draw_round_rect( ctx, layer_bounds, 0 );
-  */  
+  */
   // tm_time.tm_mday = 28; 
   strftime( date_str, sizeof( date_str ), "%e", &tm_time );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;

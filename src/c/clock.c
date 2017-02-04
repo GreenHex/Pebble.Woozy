@@ -206,6 +206,8 @@ static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
   */
   // tm_time.tm_wday = 4;
   strftime( day_str, sizeof( day_str ), "%a", &tm_time );
+  day_str[1] -= 32;
+  day_str[2] -= 32;
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
   #ifdef ALTERNATE_FONT
@@ -226,11 +228,14 @@ static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
   /*
   graphics_context_set_stroke_width( ctx, 1 );
-  graphics_context_set_stroke_color( ctx, GColorBlack );
+  graphics_context_set_stroke_color( ctx, GColorDarkGray );
   graphics_draw_round_rect( ctx, layer_bounds, 0 );
   */
   // tm_time.tm_mday = 28; 
   strftime( date_str, sizeof( date_str ), "%e", &tm_time );
+  if ( date_str[0] == ' ' ) {
+    memmove( &date_str[0], &date_str[1], sizeof( date_str ) - 1 );
+  }
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
   #ifdef ALTERNATE_FONT

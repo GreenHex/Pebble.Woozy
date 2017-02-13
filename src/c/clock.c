@@ -3,9 +3,7 @@
 //
 // Fonts:
 // https://fonts.google.com/specimen/Gloria+Hallelujah
-// https://fonts.google.com/specimen/Julee
-// https://fonts.google.com/specimen/Megrim
-//
+// https://fonts.google.com/specimen/Nixie+One
 
 #include <pebble.h>
 #include "global.h"
@@ -166,20 +164,17 @@ static void make_outline( GContext *ctx, Layer *layer, GColor fgColour, GColor o
 #else
 // #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_JULEE_22 /* RESOURCE_ID_FONT_GLORIA_HALLELUJAH_22 */
 #endif
-
 // OR
 // #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ALADIN_REGULAR_22
-// #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ATMA_REGULAR_22
-// #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_ATMA_LIGHT_22
-// #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_LIFESAVERS_REGULAR_20
-#define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_MEGRIM_22
-// #define DIGIT_ALTERNATE_FONT RESOURCE_ID_FONT_FARSANREGULAR_22
+#define DIGIT_ALTERNATE_FONT RESOURCE_ID_NIXIEONE_REGULAR_22
 
 static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
-  // graphics_context_set_fill_color( ctx, GColorLightGray );
-  // graphics_fill_rect( ctx, layer_bounds, 0, GCornerNone );
- 
+  #ifdef SHOW_LAYER_OUTLINES
+  graphics_context_set_stroke_width( ctx, 1 );
+  graphics_context_set_stroke_color( ctx, GColorDarkGray );
+  graphics_draw_round_rect( ctx, layer_bounds, 0 );
+  #endif
   snprintf( digit_str, sizeof( digit_str ), "%u",  ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->digit );
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
@@ -194,20 +189,22 @@ static void digit_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_draw_text( ctx, digit_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( ( DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
-  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorBlack ), GColorDarkGray );
+  #ifdef MAKE_OUTLINES
+  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorBlack ), GColorLightGray );
+  #endif
 }
 
 static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
-  /*
+  #ifdef SHOW_LAYER_OUTLINES
   graphics_context_set_stroke_width( ctx, 1 );
   graphics_context_set_stroke_color( ctx, GColorBlack );
   graphics_draw_round_rect( ctx, layer_bounds, 0 );
-  */
-  // tm_time.tm_wday = 4;
+  #endif
+  // tm_time.tm_wday = 3;
   strftime( day_str, sizeof( day_str ), "%a", &tm_time );
-  day_str[1] -= 32;
-  day_str[2] -= 32;
+  // day_str[1] -= 32;
+  // day_str[2] -= 32;
   layer_bounds.origin.y -= DIGIT_TXT_VERT_ADJ;
   
   #ifdef ALTERNATE_FONT
@@ -221,16 +218,19 @@ static void day_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_draw_text( ctx, day_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
-  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ), GColorDarkGray );
+  #ifdef MAKE_OUTLINES
+  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ), GColorLightGray );
+  #endif
 }
 
 static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   GRect layer_bounds = layer_get_bounds( layer );
-  /*
+  #ifdef SHOW_LAYER_OUTLINES
   graphics_context_set_stroke_width( ctx, 1 );
   graphics_context_set_stroke_color( ctx, GColorDarkGray );
   graphics_draw_round_rect( ctx, layer_bounds, 0 );
-  */
+  #endif
+  
   // tm_time.tm_mday = 28; 
   strftime( date_str, sizeof( date_str ), "%e", &tm_time );
   if ( date_str[0] == ' ' ) {
@@ -249,7 +249,9 @@ static void date_layer_update_proc( Layer *layer, GContext *ctx ) {
   graphics_draw_text( ctx, date_str, fonts_get_system_font( FONT_KEY_ROBOTO_CONDENSED_21 ), layer_bounds,
                      GTextOverflowModeTrailingEllipsis, ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->text_alignment, NULL );
   #endif
-  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ), GColorDarkGray );
+  #ifdef MAKE_OUTLINES
+  make_outline( ctx, layer, PBL_IF_COLOR_ELSE( GColorFromHEX( ( (DIGIT_LAYER_DATA *) layer_get_data( layer ) )->colour ), GColorWhite ), GColorLightGray );
+  #endif
 }
 
 static void hand_layer_update_proc( Layer *layer, GContext *ctx ) {

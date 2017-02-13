@@ -2,7 +2,7 @@
     "author": "The Resetter",
     "dependencies": {},
     "keywords": [],
-    "name": "kiddie-v1.27",
+    "name": "kiddie-v1.28",
     "pebble": {
         "displayName": "Kiddie ",
         "enableMultiJS": true,
@@ -11,70 +11,10 @@
         "resources": {
             "media": [
                 {
-                    "characterRegex": "[a-zA-Z0-9]",
-                    "file": "fonts/Farsan-Regular.ttf",
-                    "name": "FONT_FARSANREGULAR_22",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt",
-                        "diorite"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "characterRegex": "[a-zA-Z0-9]",
-                    "file": "fonts/LifeSavers-Regular.ttf",
-                    "name": "FONT_LIFESAVERS_REGULAR_20",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt",
-                        "diorite"
-                    ],
-                    "type": "font"
-                },
-                {
                     "characterRegex": "[a-zA-Z0-9 ]",
-                    "file": "fonts/Megrim.ttf",
-                    "name": "FONT_MEGRIM_22",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt",
-                        "diorite"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "characterRegex": "[a-zA-Z0-9]",
-                    "file": "fonts/Atma-Light.ttf",
-                    "name": "FONT_ATMA_LIGHT_22",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt",
-                        "diorite"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "characterRegex": "[a-zA-Z0-9]",
-                    "file": "fonts/Atma-Regular.ttf",
-                    "name": "FONT_ATMA_REGULAR_22",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt",
-                        "diorite"
-                    ],
-                    "type": "font"
-                },
-                {
-                    "characterRegex": "[a-zA-Z0-9]",
-                    "file": "fonts/Julee.ttf",
-                    "name": "FONT_JULEE_22",
-                    "targetPlatforms": [
-                        "aplite",
-                        "basalt",
-                        "diorite",
-                        "emery"
-                    ],
+                    "file": "fonts/NixieOne-Regular.ttf",
+                    "name": "NIXIEONE_REGULAR_22",
+                    "targetPlatforms": null,
                     "type": "font"
                 },
                 {
@@ -87,13 +27,6 @@
                         "emery"
                     ],
                     "type": "bitmap"
-                },
-                {
-                    "characterRegex": "[a-zA-Z0-9]",
-                    "file": "fonts/Aladin-Regular.ttf",
-                    "name": "FONT_ALADIN_REGULAR_22",
-                    "targetPlatforms": null,
-                    "type": "font"
                 },
                 {
                     "file": "images/Woozy Icon.png",
@@ -159,5 +92,5 @@
             "watchface": true
         }
     },
-    "version": "1.27.0"
+    "version": "1.28.0"
 }
